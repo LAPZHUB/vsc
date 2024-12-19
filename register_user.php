@@ -1,128 +1,168 @@
 <?php
 session_start();
-include 'db.php'; // Conexión a la base de datos
+include 'db.php'; // Archivo para conectar a la base de datos
 
-// Verificar que el usuario esté autenticado y tenga el rol adecuado
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
-    header('Location: login.html');
-    exit();
+// Verificar si el usuario tiene el rol correcto
+if ($_SESSION['role'] != 'superusuario') {
+    echo "Acceso denegado.";
+    exit;
 }
 
-// Obtener la lista de clientes
-$stmt = $conn->prepare("SELECT id_client, name FROM clients");
-$stmt->execute();
-$result = $stmt->get_result();
-$clientes = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Datos del cliente
+    $name = mysqli_real_escape_string($conexion, $_POST['name']);
+    $email = mysqli_real_escape_string($conexion, $_POST['email']);
+    $phone = mysqli_real_escape_string($conexion, $_POST['phone']);
+    $address = mysqli_real_escape_string($conexion, $_POST['address']);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $role = $_POST['role'];
-    $id_client = $_POST['id_client'];
+    // Datos del usuario
+    $username = mysqli_real_escape_string($conexion, $_POST['username']);
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Encriptar contraseña
 
-    // Preparar la consulta para insertar el nuevo usuario
-    $stmt = $conn->prepare("INSERT INTO users (username, password, role, id_client) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sssi", $username, $password, $role, $id_client);
+    // Iniciar transacción para asegurar consistencia
+    mysqli_begin_transaction($conexion);
 
-    if ($stmt->execute()) {
-        $message = "Usuario registrado correctamente.";
-    } else {
-        if ($stmt->errno == 1062) { // Código de error para entrada duplicada
-            $message = "Error: El nombre de usuario ya está registrado.";
-        } else {
-            $message = "Error al registrar el usuario: " . $stmt->error;
-        }
+    try {
+        // Insertar cliente
+        $query_client = "INSERT INTO clients (name, email, phone, address) VALUES ('$name', '$email', '$phone', '$address')";
+        mysqli_query($conexion, $query_client);
+        $id_client = mysqli_insert_id($conexion);
+
+        // Insertar usuario asociado
+        $query_user = "INSERT INTO users (username, password, role, id_client, activo) VALUES ('$username', '$password', 'cliente', $id_client, 1)";
+        mysqli_query($conexion, $query_user);
+
+        // Confirmar transacción
+        mysqli_commit($conexion);
+        echo "Cliente y usuario creados exitosamente.";
+    } catch (Exception $e) {
+        // Revertir cambios en caso de error
+        mysqli_rollback($conexion);
+        echo "Error al registrar cliente y usuario: " . $e->getMessage();
     }
-
-    $stmt->close();
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Nuevo Usuario</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Estilos generales -->
-    <link rel="stylesheet" href="ruser.css"> <!-- Estilos específicos para register_user -->
+    <title>Registrar Cliente</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Registrar Nuevo Usuario</h1>
-    </header>
-    <div class="form-container">
-        <form action="register_user.php" method="POST" onsubmit="return showModal(this)">
-            <label for="username">Usuario:</label>
-            <input type="text" id="username" name="username" required>
-            
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
-            
-            <label for="role">Rol:</label>
-            <select id="role" name="role" required>
-                <option value="consulta">Consulta</option>
-                <option value="escritura">Escritura</option>
-                <option value="superusuario">Superusuario</option>
-            </select>
-            
-            <label for="id_client">Cliente:</label>
-            <select id="id_client" name="id_client" required>
-                <?php foreach ($clientes as $cliente): ?>
-                    <option value="<?php echo $cliente['id_client']; ?>"><?php echo $cliente['name']; ?></option>
-                <?php endforeach; ?>
-            </select>
-            
-            <button type="submit">Registrar Usuario</button>
+    <div class="container mt-5">
+        <h2>Registrar Servicio</h2>
+        <form action="registro_servicio.php" method="POST">
+            <h4>Datos del Servicio</h4>
+            <div class="mb-3">
+                <label for="direccion_general" class="form-label">Dirección General</label>
+                <input type="text" class="form-control" id="direccion_general" name="direccion_general" required>
+            </div>
+            <div class="mb-3">
+                <label for="area_responsable" class="form-label">Área Responsable</label>
+                <input type="text" class="form-control" id="area_responsable" name="area_responsable" required>
+            </div>
+            <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select id="estado" name="estado" class="form-select" required>
+                    <option value="">Seleccione un estado</option>
+                    <?php
+                    $query_estados = "SELECT id, nombre FROM estados ORDER BY nombre ASC";
+                    $result_estados = mysqli_query($conexion, $query_estados);
+                    while ($row = mysqli_fetch_assoc($result_estados)) {
+                        echo "<option value='{$row['id']}'>{$row['nombre']}</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="municipio" class="form-label">Municipio</label>
+                <select id="municipio" name="municipio" class="form-select" required>
+                    <option value="">Seleccione un municipio</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="colonia" class="form-label">Colonia</label>
+                <select id="colonia" name="colonia" class="form-select" required>
+                    <option value="">Seleccione una colonia</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="seccion" class="form-label">Sección</label>
+                <select id="seccion" name="seccion" class="form-select" required>
+                    <option value="">Seleccione una sección</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Registrar Servicio</button>
         </form>
-        <button onclick="goBack()">Regresar</button> <!-- Botón de regresar -->
     </div>
-
-    <!-- Ventana Flotante -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p id="modalMessage"><?php echo isset($message) ? $message : ''; ?></p>
-        </div>
-    </div>
-
+    <!-- Scripts para cargar datos dinámicamente -->
     <script>
-        function showModal(form) {
-            const modal = document.getElementById("myModal");
-            const message = document.getElementById("modalMessage");
+        document.getElementById('estado').addEventListener('change', function () {
+            const estadoId = this.value;
+            const municipioSelect = document.getElementById('municipio');
 
-            // Aquí puedes personalizar el mensaje a mostrar en la ventana flotante
-            message.textContent = "Procesando el registro, por favor espera...";
+            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
 
-            modal.style.display = "block";
-            return true; // Permite el envío del formulario
-        }
-
-        function closeModal() {
-            const modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("myModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
+            if (estadoId) {
+                fetch(`get_municipios.php?estado_id=${estadoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(municipio => {
+                            const option = document.createElement('option');
+                            option.value = municipio.id;
+                            option.textContent = municipio.nombre;
+                            municipioSelect.appendChild(option);
+                        });
+                    });
             }
-        }
+        });
 
-        function goBack() { 
-            window.history.back(); 
-        }
+        document.getElementById('municipio').addEventListener('change', function () {
+            const municipioId = this.value;
+            const coloniaSelect = document.getElementById('colonia');
 
-        // Mostrar modal si hay un mensaje
-        <?php if (isset($message)): ?>
-            document.addEventListener('DOMContentLoaded', (event) => {
-                document.getElementById("myModal").style.display = "block";
-            });
-        <?php endif; ?>
+            coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
+
+            if (municipioId) {
+                fetch(`get_colonias.php?municipio_id=${municipioId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(colonia => {
+                            const option = document.createElement('option');
+                            option.value = colonia.id;
+                            option.textContent = colonia.nombre;
+                            coloniaSelect.appendChild(option);
+                        });
+                    });
+            }
+        });
+
+        document.getElementById('colonia').addEventListener('change', function () {
+            const coloniaId = this.value;
+            const seccionSelect = document.getElementById('seccion');
+
+            seccionSelect.innerHTML = '<option value="">Seleccione una sección</option>';
+
+            if (coloniaId) {
+                fetch(`get_secciones.php?colonia_id=${coloniaId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(seccion => {
+                            const option = document.createElement('option');
+                            option.value = seccion.id;
+                            option.textContent = seccion.nombre;
+                            seccionSelect.appendChild(option);
+                        });
+                    });
+            }
+        });
     </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

@@ -141,5 +141,68 @@ $conn->close();
             });
         <?php endif; ?>
     </script>
+    
+    <h4>Ubicación del Cliente</h4>
+<div class="mb-3">
+    <label for="estado" class="form-label">Estado</label>
+    <select id="estado" name="estado" class="form-select" required>
+        <option value="">Seleccione un estado</option>
+        <?php
+        $query = "SELECT id, nombre FROM estados";
+        $result = mysqli_query($conexion, $query);
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<option value='{$row['id']}'>{$row['nombre']}</option>";
+        }
+        ?>
+    </select>
+</div>
+<div class="mb-3">
+    <label for="municipio" class="form-label">Municipio</label>
+    <select id="municipio" name="municipio" class="form-select" required>
+        <option value="">Seleccione un municipio</option>
+    </select>
+</div>
+
+<script>
+document.getElementById('estado').addEventListener('change', function () {
+    const estadoId = this.value;
+    const municipioSelect = document.getElementById('municipio');
+
+    municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+    if (estadoId) {
+        fetch(`get_municipios.php?estado_id=${estadoId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(municipio => {
+                    const option = document.createElement('option');
+                    option.value = municipio.id;
+                    option.textContent = municipio.nombre;
+                    municipioSelect.appendChild(option);
+                });
+            });
+    }
+});
+
+document.getElementById('municipio').addEventListener('change', function () {
+    const municipioId = this.value;
+    const coloniaSelect = document.getElementById('colonia');
+
+    coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
+    if (municipioId) {
+        fetch(`get_colonias.php?municipio_id=${municipioId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(colonia => {
+                    const option = document.createElement('option');
+                    option.value = colonia.id;
+                    option.textContent = colonia.nombre;
+                    coloniaSelect.appendChild(option);
+                });
+            });
+    }
+});
+</script>
+
+
 </body>
 </html>
