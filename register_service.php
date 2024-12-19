@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sssssssssssiis", $direccion_general, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $colonia, $codigo_postal, $num_personas, $cumplido, $seccion_electoral);
 
     if ($stmt->execute()) {
-        $message = "Servicio registrado correctamente.";
+        header('Location: register_service_doc.php');
+        exit();
     } else {
         $message = "Error al registrar el servicio: " . $stmt->error;
     }
@@ -49,6 +50,109 @@ $conn->close();
     <title>Registrar Servicio</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-group button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .navigation-buttons a {
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            color: #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .navigation-buttons a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .navigation-buttons a {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="form-container">
@@ -140,9 +244,14 @@ $conn->close();
             </div>
 
             <div class="form-group">
-                <button type="submit">Registrar Servicio</button>
+                <button type="submit">Guardar y Continuar</button>
             </div>
         </form>
+
+        <div class="navigation-buttons">
+            <a href="index.php">Regresar</a>
+            <a href="register_service_doc.php">Ir a Documentos</a>
+        </div>
     </div>
 
     <script>
