@@ -9,8 +9,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Recoger datos del formulario
     $direccion_general = $_POST['direccion_general'];
-    $escrito_solicitud = $_POST['escrito_solicitud'];
     $fecha_captura = $_POST['fecha_captura'];
     $area_responsable = $_POST['area_responsable'];
     $nombre_completo = $_POST['nombre_completo'];
@@ -24,11 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $num_personas = $_POST['num_personas'];
     $cumplido = isset($_POST['cumplido']) ? 1 : 0;
     $seccion_electoral = $_POST['seccion_electoral'];
-    $geolocalizacion = $_POST['geolocalizacion'];
 
     // Preparar la consulta para insertar el nuevo servicio
-    $stmt = $conn->prepare("INSERT INTO servicios (direccion_general, escrito_solicitud, fecha_captura, area_responsable, nombre_completo, clave_elector, telefono, calle, num_interior, num_exterior, colonia, codigo_postal, num_personas, cumplido, seccion_electoral, geolocalizacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssssssssisss", $direccion_general, $escrito_solicitud, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $colonia, $codigo_postal, $num_personas, $cumplido, $seccion_electoral, $geolocalizacion);
+    $stmt = $conn->prepare("INSERT INTO servicios (direccion_general, fecha_captura, area_responsable, nombre_completo, clave_elector, telefono, calle, num_interior, num_exterior, colonia, codigo_postal, num_personas, cumplido, seccion_electoral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssssssiis", $direccion_general, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $colonia, $codigo_postal, $num_personas, $cumplido, $seccion_electoral);
 
     if ($stmt->execute()) {
         $message = "Servicio registrado correctamente.";
@@ -47,220 +46,153 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Nuevo Servicio</title>
-    <link rel="stylesheet" href="rservice.css">
-    <style>
-        /* Estilos para la ventana flotante */
-        .modal {
-            display: none; /* Oculto por defecto */
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4); /* Fondo oscuro */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+    <title>Registrar Servicio</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Registrar Nuevo Servicio</h1>
-    </header>
     <div class="form-container">
-        <form action="register_service.php" method="POST" onsubmit="return showModal(this)">
-            <label for="direccion_general">Dirección General:</label>
-            <input type="text" id="direccion_general" name="direccion_general" required>
+        <h1>Registrar Servicio</h1>
+        <?php if (isset($message)): ?>
+            <p><?php echo $message; ?></p>
+        <?php endif; ?>
+        <form action="register_service.php" method="POST">
+            <div class="form-group">
+                <label for="direccion_general">Dirección General:</label>
+                <input type="text" id="direccion_general" name="direccion_general" required>
+            </div>
 
-            <label for="escrito_solicitud">Escrito Solicitud:</label>
-            <input type="text" id="escrito_solicitud" name="escrito_solicitud">
+            <div class="form-group">
+                <label for="fecha_captura">Fecha de Captura:</label>
+                <input type="date" id="fecha_captura" name="fecha_captura" required>
+            </div>
 
-            <label for="fecha_captura">Fecha de Captura:</label>
-            <input type="date" id="fecha_captura" name="fecha_captura" required>
-            
-            <label for="area_responsable">Área Responsable:</label>
-            <input type="text" id="area_responsable" name="area_responsable" required>
+            <div class="form-group">
+                <label for="area_responsable">Área Responsable:</label>
+                <input type="text" id="area_responsable" name="area_responsable" required>
+            </div>
 
-            <label for="nombre_completo">Nombre Completo:</label>
-            <input type="text" id="nombre_completo" name="nombre_completo" required>
+            <div class="form-group">
+                <label for="nombre_completo">Nombre Completo:</label>
+                <input type="text" id="nombre_completo" name="nombre_completo" required>
+            </div>
 
-            <label for="clave_elector">Clave Elector:</label>
-            <input type="text" id="clave_elector" name="clave_elector">
+            <div class="form-group">
+                <label for="clave_elector">Clave de Elector:</label>
+                <input type="text" id="clave_elector" name="clave_elector" required>
+            </div>
 
-            <label for="telefono">Teléfono:</label>
-            <input type="tel" id="telefono" name="telefono">
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" required>
+            </div>
 
-            <label for="calle">Calle:</label>
-            <input type="text" id="calle" name="calle">
+            <div class="form-group">
+                <label for="calle">Calle:</label>
+                <input type="text" id="calle" name="calle" required>
+            </div>
 
-            <label for="num_interior">Número Interior:</label>
-            <input type="text" id="num_interior" name="num_interior">
+            <div class="form-group">
+                <label for="num_interior">Número Interior:</label>
+                <input type="text" id="num_interior" name="num_interior">
+            </div>
 
-            <label for="num_exterior">Número Exterior:</label>
-            <input type="text" id="num_exterior" name="num_exterior">
+            <div class="form-group">
+                <label for="num_exterior">Número Exterior:</label>
+                <input type="text" id="num_exterior" name="num_exterior" required>
+            </div>
 
-            <label for="colonia">Colonia:</label>
-            <input type="text" id="colonia" name="colonia">
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccione un estado</option>
+                    <?php
+                    // Consulta para obtener los estados
+                    include 'db.php';
+                    $query_estados = "SELECT ID_ESTADO, NOMBRE_ESTADO FROM estados ORDER BY NOMBRE_ESTADO";
+                    $result_estados = $conn->query($query_estados);
+                    while ($row = $result_estados->fetch_assoc()):
+                    ?>
+                        <option value="<?php echo $row['ID_ESTADO']; ?>"><?php echo $row['NOMBRE_ESTADO']; ?></option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
 
-            <label for="codigo_postal">Código Postal:</label>
-            <input type="text" id="codigo_postal" name="codigo_postal">
+            <div class="form-group">
+                <label for="municipio">Municipio:</label>
+                <select id="municipio" name="municipio" required>
+                    <option value="">Seleccione un municipio</option>
+                </select>
+            </div>
 
-            <label for="num_personas">Número de Personas:</label>
-            <input type="number" id="num_personas" name="num_personas">
+            <div class="form-group">
+                <label for="colonia">Colonia:</label>
+                <select id="colonia" name="colonia" required>
+                    <option value="">Seleccione una colonia</option>
+                </select>
+            </div>
 
-            <label for="cumplido">Cumplido:</label>
-            <input type="checkbox" id="cumplido" name="cumplido">
+            <div class="form-group">
+                <label for="seccion_electoral">Sección Electoral:</label>
+                <select id="seccion_electoral" name="seccion_electoral" required>
+                    <option value="">Seleccione una sección</option>
+                </select>
+            </div>
 
-            <label for="seccion_electoral">Sección Electoral:</label>
-            <input type="text" id="seccion_electoral" name="seccion_electoral">
-
-            <label for="geolocalizacion">Geolocalización:</label>
-            <input type="text" id="geolocalizacion" name="geolocalizacion">
-
-            <button type="submit">Registrar Servicio</button>
-            <button type="button" onclick="window.location.href='register_service_doc.php'">Subir Documentos</button> <!-- Botón para ir a register_service_doc.php -->
-            <button type="button" onclick="goBack()">Regresar</button> <!-- Botón de regresar -->
+            <div class="form-group">
+                <button type="submit">Registrar Servicio</button>
+            </div>
         </form>
     </div>
 
-    <!-- Ventana Flotante -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p id="modalMessage"><?php echo isset($message) ? $message : ''; ?></p>
-        </div>
-    </div>
-
     <script>
-        function showModal(form) {
-            const modal = document.getElementById("myModal");
-            const message = document.getElementById("modalMessage");
-
-            // Aquí puedes personalizar el mensaje a mostrar en la ventana flotante
-            message.textContent = "Procesando el registro, por favor espera...";
-
-            modal.style.display = "block";
-            return true; // Permite el envío del formulario
-        }
-
-        function closeModal() {
-            const modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("myModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
+        // Cargar municipios al seleccionar estado
+        $('#estado').change(function() {
+            const estadoId = $(this).val();
+            if (estadoId) {
+                $.ajax({
+                    url: 'get_municipios.php',
+                    type: 'POST',
+                    data: { estado: estadoId },
+                    success: function(data) {
+                        $('#municipio').html(data);
+                        $('#colonia').html('<option value="">Seleccione una colonia</option>');
+                        $('#seccion_electoral').html('<option value="">Seleccione una sección</option>');
+                    }
+                });
             }
-        }
+        });
 
-        function goBack() { 
-            window.history.back(); 
-        }
+        // Cargar colonias al seleccionar municipio
+        $('#municipio').change(function() {
+            const municipioId = $(this).val();
+            if (municipioId) {
+                $.ajax({
+                    url: 'get_colonias.php',
+                    type: 'POST',
+                    data: { municipio: municipioId },
+                    success: function(data) {
+                        $('#colonia').html(data);
+                        $('#seccion_electoral').html('<option value="">Seleccione una sección</option>');
+                    }
+                });
+            }
+        });
 
-        // Mostrar modal si hay un mensaje
-        <?php if (isset($message)): ?>
-            document.addEventListener('DOMContentLoaded', (event) => {
-                document.getElementById("myModal").style.display = "block";
-            });
-        <?php endif; ?>
+        // Cargar secciones al seleccionar colonia
+        $('#colonia').change(function() {
+            const coloniaId = $(this).val();
+            if (coloniaId) {
+                $.ajax({
+                    url: 'get_secciones.php',
+                    type: 'POST',
+                    data: { colonia: coloniaId },
+                    success: function(data) {
+                        $('#seccion_electoral').html(data);
+                    }
+                });
+            }
+        });
     </script>
-
-<h4>Ubicación del Servicio</h4>
-<div class="mb-3">
-    <label for="estado" class="form-label">Estado</label>
-    <select id="estado_servicio" name="estado_servicio" class="form-select" required>
-        <option value="">Seleccione un estado</option>
-        <?php
-        $query = "SELECT id, nombre FROM estados";
-        $result = mysqli_query($conexion, $query);
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<option value='{$row['id']}'>{$row['nombre']}</option>";
-        }
-        ?>
-    </select>
-</div>
-<div class="mb-3">
-    <label for="municipio" class="form-label">Municipio</label>
-    <select id="municipio_servicio" name="municipio_servicio" class="form-select" required>
-        <option value="">Seleccione un municipio</option>
-    </select>
-</div>
-<div class="mb-3">
-    <label for="colonia" class="form-label">Colonia</label>
-    <select id="colonia" name="colonia" class="form-select" required>
-        <option value="">Seleccione una colonia</option>
-    </select>
-</div>
-<div class="mb-3">
-    <label for="seccion" class="form-label">Sección</label>
-    <select id="seccion" name="seccion" class="form-select" required>
-        <option value="">Seleccione una sección</option>
-    </select>
-</div>
-
-<script>
-document.getElementById('estado').addEventListener('change', function () {
-    const estadoId = this.value;
-    const municipioSelect = document.getElementById('municipio');
-
-    municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-    if (estadoId) {
-        fetch(`get_municipios.php?estado_id=${estadoId}`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(municipio => {
-                    const option = document.createElement('option');
-                    option.value = municipio.id;
-                    option.textContent = municipio.nombre;
-                    municipioSelect.appendChild(option);
-                });
-            });
-    }
-});
-
-document.getElementById('municipio').addEventListener('change', function () {
-    const municipioId = this.value;
-    const coloniaSelect = document.getElementById('colonia');
-
-    coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
-    if (municipioId) {
-        fetch(`get_colonias.php?municipio_id=${municipioId}`)
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(colonia => {
-                    const option = document.createElement('option');
-                    option.value = colonia.id;
-                    option.textContent = colonia.nombre;
-                    coloniaSelect.appendChild(option);
-                });
-            });
-    }
-});
-</script>
-
-
 </body>
 </html>
-
