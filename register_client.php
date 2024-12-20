@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connection.php'; // Conexión a la base de datos
+include 'db.php'; // Conexión a la base de datos
 
 // Verificar que el usuario esté autenticado
 if (!isset($_SESSION['loggedin'])) {
@@ -8,8 +8,8 @@ if (!isset($_SESSION['loggedin'])) {
     exit;
 }
 
+// Procesar el formulario al ser enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recoger datos del formulario
     $company_name = $_POST['company_name'];
     $contact_person = $_POST['contact_person'];
     $phone = $_POST['phone'];
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssssiiiii", $company_name, $contact_person, $phone, $address, $estado, $municipio, $distrito_federal, $distrito_local, $_SESSION['user_id']);
 
     if ($stmt->execute()) {
-        header("Location: index_clients.php?msg=¡Nuevo cliente registrado exitosamente!");
+        header("Location: index_clients.php?msg=Nuevo cliente registrado exitosamente");
     } else {
         echo "Error: " . $stmt->error;
     }
@@ -41,19 +41,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="css/styles.css">
-    <title>CSM - Registrar Cliente</title>
+    <title>Registrar Cliente</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: rgb(1, 42, 74);
             background: linear-gradient(0deg, rgb(1, 32, 56) 16%, rgb(30, 77, 105) 89%);
         }
     </style>
-    <!-- Incluir jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Cargar estados al cargar la página
+            $.ajax({
+                url: 'ajax.php?action=get_estados',
+                method: 'GET',
+                success: function (data) {
+                    $('#estado').append(data);
+                }
+            });
+
+            // Cargar municipios al seleccionar un estado
+            $('#estado').change(function () {
+                const estadoId = $(this).val();
+                if (estadoId) {
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_municipios', estado_id: estadoId },
+                        success: function (data) {
+                            $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
+                        }
+                    });
+                }
+            });
+
+            // Cargar distritos federales al seleccionar un municipio
+            $('#municipio').change(function () {
+                const municipioId = $(this).val();
+                if (municipioId) {
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_distritos_federales', municipio_id: municipioId },
+                        success: function (data) {
+                            $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
+                        }
+                    });
+                }
+            });
+
+            // Cargar distritos locales al seleccionar un municipio
+            $('#municipio').change(function () {
+                const municipioId = $(this).val();
+                if (municipioId) {
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_distritos_locales', municipio_id: municipioId },
+                        success: function (data) {
+                            $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container py-4 h-100">
@@ -93,7 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="estado">Estado:</label>
                                         <select id="estado" name="estado" class="form-control" required>
                                             <option value="">Seleccione un estado</option>
-                                            <!-- Opciones de estados se cargarán aquí -->
                                         </select>
                                     </div>
 
@@ -101,7 +155,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="municipio">Municipio:</label>
                                         <select id="municipio" name="municipio" class="form-control" required>
                                             <option value="">Seleccione un municipio</option>
-                                            <!-- Opciones de municipios se cargarán aquí -->
                                         </select>
                                     </div>
 
@@ -109,7 +162,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="distrito_federal">Distrito Federal:</label>
                                         <select id="distrito_federal" name="distrito_federal" class="form-control" required>
                                             <option value="">Seleccione un distrito federal</option>
-                                            <!-- Opciones de distritos federales se cargarán aquí -->
                                         </select>
                                     </div>
 
@@ -117,7 +169,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <label for="distrito_local">Distrito Local:</label>
                                         <select id="distrito_local" name="distrito_local" class="form-control" required>
                                             <option value="">Seleccione un distrito local</option>
-                                            <!-- Opciones de distritos locales se cargarán aquí -->
                                         </select>
                                     </div>
 
@@ -125,7 +176,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <button class="btn btn-dark btn-lg btn-block" type="submit" name="submit">Registrar Cliente</button>
                                     </div>
 
-                                    <a class="small text-muted" href="#!">Olvidé mi contraseña</a>
-                                    <p class="mb-5 pb-lg-2
-::contentReference[oaicite:0]{index=0}
- 
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
