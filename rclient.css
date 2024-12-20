@@ -1,101 +1,104 @@
+/* rclient.css - Estilos para la página register_client.php */
+
+/* Fondo de la página */
 body {
-    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 0;
+/* Contenedor principal */
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
     text-align: center;
 }
 
-header h1 {
-    margin: 0;
+/* Logotipo */
+header img {
+    max-height: 100px;
+    background-color: #ffffff; /* Fondo blanco para el logotipo */
+    border-radius: 5px;
+    padding: 5px;
+    display: block;
+    margin: 0 auto 20px auto; /* Centrar y agregar espacio inferior */
 }
 
-.form-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* Título */
+h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #007bff;
+}
+
+/* Formularios */
+form {
     text-align: left;
 }
 
-.form-container label {
-    display: block;
-    margin-bottom: 5px;
+.form-group {
+    margin-bottom: 15px;
 }
 
-.form-container input, .form-container select, .form-container textarea {
-    width: calc(100% - 22px);
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
+    font-size: 1rem;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
     box-sizing: border-box;
 }
 
-.form-container button {
-    padding: 10px 20px;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px; /* Añade un margen superior para separar del formulario */
-}
-
-.form-container button:hover {
-    background-color: #555;
-}
-
-/* Estilos para la ventana flotante */
-.modal {
-    display: none; /* Oculto por defecto */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4); /* Fondo oscuro */
-}
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
+/* Botón de registro */
 button {
-    padding: 10px 20px;
-    background-color: #333;
-    color: #fff;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px; /* Añade un margen superior para separar del formulario */
+    font-size: 1rem;
+    width: 100%;
 }
 
 button:hover {
-    background-color: #555;
+    background-color: #0056b3;
+}
+
+/* Mensajes */
+.alert {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: left;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    input, select, textarea, button {
+        font-size: 0.9rem;
+    }
 }

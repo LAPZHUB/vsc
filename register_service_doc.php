@@ -76,7 +76,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Documentos</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="rservice_doc.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
     <script>
         function initMap() {
