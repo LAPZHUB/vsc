@@ -3,9 +3,9 @@ session_start();
 include 'db.php'; // Conexión a la base de datos
 
 // Verificar que el usuario esté autenticado
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: login.php');
-    exit;
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
+    header('Location: login.html');
+    exit();
 }
 
 // Procesar el formulario al ser enviado
