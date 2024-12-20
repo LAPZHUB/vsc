@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'db.php'; // Conexión a la base de datos
-include 'security.php'; // Verificar la seguridad del sistema
 
 // Verificar que el usuario esté autenticado y tenga el rol adecuado
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
@@ -11,7 +10,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
 
 // Obtener los nombres de los clientes para el menú desplegable
 $clientes = [];
-$query = "SELECT id, name FROM clients ORDER BY name";
+$query = "SELECT id_client, name FROM clients ORDER BY name";
 $result = $conn->query($query);
 while ($row = $result->fetch_assoc()) {
     $clientes[] = $row;

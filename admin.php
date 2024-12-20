@@ -15,8 +15,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administración de Superusuario</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Estilos generales -->
-    <link rel="stylesheet" href="admin.css"> <!-- Estilos específicos para administración -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
     <header>
