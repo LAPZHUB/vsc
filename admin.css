@@ -8,7 +8,7 @@
 }
 
 header {
-    background-color: #f5f5f5; /* Fondo claro */
+    background-color: #787878; /* Fondo claro */
     padding: 10px;
     text-align: center;
 }
@@ -20,7 +20,7 @@ header img {
 
 
 header img {
-    filter: drop-shadow(2px 2px 4px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(2px 2px 4px rgba(115, 115, 115, 0.8));
     max-height: 100px; /* Ajusta la altura del logo */
 }
 
@@ -41,19 +41,19 @@ table {
 
 table th, table td {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #878686;
     text-align: left;
 }
 
 table th {
     background-color: #007bff;
-    color: white;
+    color: rgb(144, 143, 143);
 }
 
 /* Botones */
 button {
     background-color: #007bff;
-    color: white;
+    color: rgb(150, 149, 149);
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
