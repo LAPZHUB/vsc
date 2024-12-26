@@ -161,19 +161,19 @@ $conn->close();
             </select>
 
             <label for="distrito_federal">Distrito Federal:</label>
-            <select id="distrito_federal" name="distrito_federal" required>
+            <select id="distrito_federal" name="distrito_federal">
                 <option value="">Seleccione un distrito federal</option>
                 <!-- Opciones cargadas dinámicamente -->
             </select>
 
             <label for="distrito_local">Distrito Local:</label>
-            <select id="distrito_local" name="distrito_local" required>
+            <select id="distrito_local" name="distrito_local">
                 <option value="">Seleccione un distrito local</option>
                 <!-- Opciones cargadas dinámicamente -->
             </select>
 
             <label for="municipio">Municipio:</label>
-            <select id="municipio" name="municipio" required>
+            <select id="municipio" name="municipio">
                 <option value="">Seleccione un municipio</option>
                 <!-- Opciones cargadas dinámicamente -->
             </select>

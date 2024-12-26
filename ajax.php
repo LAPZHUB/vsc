@@ -19,43 +19,49 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
             }
             break;
 
-        case 'get_df':
-            // Obtener lista de distritos federales
-            if (isset($_POST['ID_ESTADO'])) {
-                $estado_id = intval($_POST['ID_ESTADO']);
-                $query = "SELECT ID_DISTIRTO_FEDERAL, CABECERA_DISTIRTAL_FEDERAL FROM distritos_federales WHERE ID_ESTADO = $estado_id ORDER BY CABECERA_DISTIRTAL_FEDERAL";
-                $result = $conn->query($query);
-
-                if ($result) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo '<option value="' . $row['ID_DISTIRTO_FEDERAL'] . '">' . $row['CABECERA_DISTIRTAL_FEDERAL'] . '</option>';
+            case 'get_df':
+                if (isset($_POST['ID_ESTADO'])) {
+                    $estado_id = intval($_POST['ID_ESTADO']);
+                    $query = "SELECT ID_DISTRITO_FEDERAL 
+                              FROM distritos_federales 
+                              WHERE ID_ESTADO = $estado_id 
+                              ORDER BY ID_DISTRITO_FEDERAL";
+                    $result = $conn->query($query);
+            
+                    if ($result) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<option value="' . $row['ID_DISTRITO_FEDERAL'] . '">' . $row['ID_DISTRITO_FEDERAL'] . '</option>';
+                        }
+                    } else {
+                        echo '<option value="">Error al cargar distritos federales</option>';
                     }
                 } else {
-                    echo '<option value="">Error al cargar distritos federales</option>';
+                    echo '<option value="">Estado no especificado</option>';
                 }
-            } else {
-                echo '<option value="">Estado no especificado</option>';
-            }
-            break;
+                break;
+            
 
-        case 'get_dl':
-            // Obtener lista de distritos locales
-            if (isset($_POST['ID_ESTADO'])) {
-                $estado_id = intval($_POST['ID_ESTADO']);
-                $query = "SELECT ID_DISTRITO_LOCAL, CABECERA_DISTRITAL_LOCAL FROM distritos_locales WHERE ID_ESTADO = $estado_id ORDER BY CABECERA_DISTRITAL_LOCAL";
-                $result = $conn->query($query);
-
-                if ($result) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo '<option value="' . $row['ID_DISTRITO_LOCAL'] . '">' . $row['CABECERA_DISTRITAL_LOCAL'] . '</option>';
+            case 'get_dl':
+                if (isset($_POST['ID_ESTADO'])) {
+                    $estado_id = intval($_POST['ID_ESTADO']);
+                    $query = "SELECT ID_DISTRITO_LOCAL 
+                              FROM distritos_locales 
+                              WHERE ID_ESTADO = $estado_id 
+                              ORDER BY ID_DISTRITO_LOCAL";
+                    $result = $conn->query($query);
+            
+                    if ($result) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<option value="' . $row['ID_DISTRITO_LOCAL'] . '">' . $row['ID_DISTRITO_LOCAL'] . '</option>';
+                        }
+                    } else {
+                        echo '<option value="">Error al cargar distritos locales</option>';
                     }
                 } else {
-                    echo '<option value="">Error al cargar distritos locales</option>';
+                    echo '<option value="">Estado no especificado</option>';
                 }
-            } else {
-                echo '<option value="">Estado no especificado</option>';
-            }
-            break;
+                break;
+            
 
         case 'get_municipios':
             // Obtener lista de municipios
