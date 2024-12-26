@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="rclient.css">
+    <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     
     <title>Registrar Cliente</title>
@@ -56,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $(document).ready(function () {
             // Cargar estados al cargar la página
             $.ajax({
-                url: 'ajax.php?action=get_estados',
+                url: 'ajax.php?action=get_estado',
                 method: 'GET',
                 success: function (data) {
                     $('#estado').append(data);
@@ -70,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $.ajax({
                         url: 'ajax.php',
                         method: 'POST',
-                        data: { action: 'get_municipios', estado_id: estadoId },
+                        data: { action: 'get_municipios', ID_ESTADO: estadoId },
                         success: function (data) {
                             $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
                         }

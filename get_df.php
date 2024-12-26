@@ -2,22 +2,22 @@
 header('Content-Type: application/json');
 include 'db.php'; // Archivo de conexión a la base de datos
 
-if (isset($_GET['estado_id'])) {
-    $estado_id = intval($_GET['estado_id']);
+if (isset($_GET['ID_ESTADO'])) {
+    $estado_id = intval($_GET['ID_ESTADO']);
 
     try {
         // Consultar los distritos federales basados en el estado seleccionado
-        $query = "SELECT id, nombre FROM distritos_federales WHERE estado_id = ? ORDER BY nombre";
+        $query = "SELECT ID_DISTRITO_FEDERAL, CABECERA_DISTRITAL_FEDERAL FROM distritos_federales WHERE ID_ESTADO = ? ORDER BY NOMBRE_ESTADO";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $estado_id);
+        $stmt->bind_param("i", $ID_ESTADO);
         $stmt->execute();
         $result = $stmt->get_result();
 
         $distritos_federales = [];
         while ($row = $result->fetch_assoc()) {
             $distritos_federales[] = [
-                'id' => $row['id'],
-                'nombre' => $row['nombre']
+                'ID_DISTRITO_FEDERAL' => $row['ID_DISTRITO_FEDERAL'],
+                'CABECERA_DISTRITAL_FEDERAL' => $row['CABECERA_DISTRITAL_FEDERAL']
             ];
         }
 
