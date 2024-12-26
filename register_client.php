@@ -15,9 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = $_POST['phone'];
     $address = $_POST['address'];
     $estado = $_POST['estado'];
-    $municipio = $_POST['municipio'];
     $distrito_federal = $_POST['distrito_federal'];
     $distrito_local = $_POST['distrito_local'];
+    $municipio = $_POST['municipio'];
+   
 
     // Preparar la consulta para insertar el nuevo cliente
     $stmt = $conn->prepare("INSERT INTO clients (company_name, contact_person, phone, address, estado_id, municipio_id, distrito_federal_id, distrito_local_id, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -63,15 +64,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $('#estado').append(data);
                 }
             });
-
-            // Cargar municipios al seleccionar un estado
+            // Cargar distritos federales al seleccionar un estado
             $('#estado').change(function () {
-                const estadoId = $(this).val();
-                if (estadoId) {
+                const ID_ESTADO = $(this).val();
+                if (ID_ESTADO) {
                     $.ajax({
                         url: 'ajax.php',
                         method: 'POST',
-                        data: { action: 'get_municipios', ID_ESTADO: estadoId },
+                        data: { action: 'get_df', ID_ESTADO: IDESTADO },
+                        success: function (data) {
+                            $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
+                        }
+                    });
+                }
+            });
+            // Cargar distritos locales al seleccionar un ESTADP
+            $('#estado').change(function () {
+                const ID_ESTADO = $(this).val();
+                if (ID_ESTADO) {
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_dl, ID_ESTADO: IDESTADO },
+                        success: function (data) {
+                            $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
+                        }
+                    });
+                }
+            });
+
+            // Cargar municipios al seleccionar un estado
+            $('#estado').change(function () {
+                const ID_ESTADO = $(this).val();
+                if (ID_ESTADO) {
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_municipios', ID_ESTADO: IDESTADO },
                         success: function (data) {
                             $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
                         }
@@ -79,35 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             });
 
-            // Cargar distritos federales al seleccionar un municipio
-            $('#municipio').change(function () {
-                const municipioId = $(this).val();
-                if (municipioId) {
-                    $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_distritos_federales', municipio_id: municipioId },
-                        success: function (data) {
-                            $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
-                        }
-                    });
-                }
-            });
-
-            // Cargar distritos locales al seleccionar un municipio
-            $('#municipio').change(function () {
-                const municipioId = $(this).val();
-                if (municipioId) {
-                    $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_distritos_locales', municipio_id: municipioId },
-                        success: function (data) {
-                            $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
-                        }
-                    });
-                }
-            });
         });
     </script>
 </head>
