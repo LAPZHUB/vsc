@@ -7,7 +7,7 @@ if (isset($_GET['ID_ESTADO'])) {
 
     try {
         // Consultar los distritos locales basados en el estado seleccionado
-        $query = "SELECT ID_DISTRITO_LOCAL, CABECERA_DISTRITAL_LOCAL FROM distritos_locales WHERE ID_ESTADO = ? ORDER BY CABECERA_DISTRITAL_LOCAL";
+        $query = "SELECT ID_ESTADO, ID_DISTRITO_LOCAL, CABECERA_DISTRITAL_LOCAL FROM distritos_locales ORDER BY ID_ESTADO AND ID_DISTRITO_LOCAL";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $ID_ESTADO);
         $stmt->execute();
