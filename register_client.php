@@ -55,61 +55,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            // Cargar estados al cargar la página
+$(document).ready(function () {
+    // Cargar estados al cargar la página
+    $.ajax({
+        url: 'ajax.php?action=get_estado',
+        method: 'GET',
+        success: function (data) {
+            $('#estado').append(data);
+        }
+    });
+
+    // Manejar cambios en el estado
+    $('#estado').change(function () {
+        const ID_ESTADO = $(this).val();
+        if (ID_ESTADO) {
+            // Cargar distritos federales
             $.ajax({
-                url: 'ajax.php?action=get_estado',
-                method: 'GET',
+                url: 'ajax.php',
+                method: 'POST',
+                data: { action: 'get_df', ID_ESTADO: ID_ESTADO },
                 success: function (data) {
-                    $('#estado').append(data);
-                }
-            });
-            // Cargar distritos federales al seleccionar un estado
-            $('#estado').change(function () {
-                const ID_ESTADO = $(this).val();
-                if (ID_ESTADO) {
-                    $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_df', ID_ESTADO: IDESTADO },
-                        success: function (data) {
-                            $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
-                        }
-                    });
-                }
-            });
-            // Cargar distritos locales al seleccionar un ESTADP
-            $('#estado').change(function () {
-                const ID_ESTADO = $(this).val();
-                if (ID_ESTADO) {
-                    $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_dl, ID_ESTADO: IDESTADO },
-                        success: function (data) {
-                            $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
-                        }
-                    });
+                    $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
                 }
             });
 
-            // Cargar municipios al seleccionar un estado
-            $('#estado').change(function () {
-                const ID_ESTADO = $(this).val();
-                if (ID_ESTADO) {
-                    $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_municipios', ID_ESTADO: IDESTADO },
-                        success: function (data) {
-                            $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
-                        }
-                    });
+            // Cargar distritos locales
+            $.ajax({
+                url: 'ajax.php',
+                method: 'POST',
+                data: { action: 'get_dl', ID_ESTADO: ID_ESTADO },
+                success: function (data) {
+                    $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
                 }
             });
 
-        });
-    </script>
+            // Cargar municipios
+            $.ajax({
+                url: 'ajax.php',
+                method: 'POST',
+                data: { action: 'get_municipios', ID_ESTADO: ID_ESTADO },
+                success: function (data) {
+                    $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
+                }
+            });
+        }
+    });
+});
+</script>
 </head>
 <body>
     <div class="container py-4 h-100">
@@ -153,13 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="municipio">Municipio:</label>
-                                        <select id="municipio" name="municipio" class="form-control" required>
-                                            <option value="">Seleccione un municipio</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group mb-3">
                                         <label for="distrito_federal">Distrito Federal:</label>
                                         <select id="distrito_federal" name="distrito_federal" class="form-control" required>
                                             <option value="">Seleccione un distrito federal</option>
@@ -173,6 +158,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </select>
                                     </div>
 
+                                    <div class="form-group mb-3">
+                                        <label for="municipio">Municipio:</label>
+                                        <select id="municipio" name="municipio" class="form-control" required>
+                                            <option value="">Seleccione un municipio</option>
+                                        </select>
+                                    </div>
+                                   
                                     <div class="pt-1 mb-4">
                                         <button class="btn btn-dark btn-lg btn-block" type="submit" name="submit">Registrar Cliente</button>
                                     </div>
