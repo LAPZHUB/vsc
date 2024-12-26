@@ -103,9 +103,11 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Servicio</title>
-    <link rel="stylesheet" href="rservice.css">
+    <title>Registrar Nuevo Servicio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
     <script>
         $(document).ready(function () {
             // Cargar estados al cargar la página
@@ -168,88 +170,76 @@ $conn->close();
     </script>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Registrar Servicio</h1>
-        <form action="register_service.php" method="POST">
-            <div class="form-group">
-                <label for="direccion_general">Dirección General:</label>
-                <input type="text" id="direccion_general" name="direccion_general" required>
-            </div>
-            <div class="form-group">
-                <label for="fecha_captura">Fecha de Captura:</label>
-                <input type="date" id="fecha_captura" name="fecha_captura" required>
-            </div>
-            <div class="form-group">
-                <label for="area_responsable">Área Responsable:</label>
-                <input type="text" id="area_responsable" name="area_responsable" required>
-            </div>
-            <div class="form-group">
-                <label for="nombre_completo">Nombre Completo:</label>
-                <input type="text" id="nombre_completo" name="nombre_completo" required>
-            </div>
-            <div class="form-group">
-                <label for="clave_elector">Clave de Elector:</label>
-                <input type="text" id="clave_elector" name="clave_elector" required>
-            </div>
-            <div class="form-group">
-                <label for="telefono">Teléfono:</label>
-                <input type="text" id="telefono" name="telefono" required>
-            </div>
-            <div class="form-group">
-                <label for="calle">Calle:</label>
-                <input type="text" id="calle" name="calle" required>
-            </div>
-            <div class="form-group">
-                <label for="num_interior">Número Interior:</label>
-                <input type="text" id="num_interior" name="num_interior">
-            </div>
-            <div class="form-group">
-                <label for="num_exterior">Número Exterior:</label>
-                <input type="text" id="num_exterior" name="num_exterior" required>
-            </div>
-            <div class="form-group">
-                <label for="estado">Estado:</label>
-                <select id="estado" name="estado" required>
-                    <option value="">Seleccione un estado</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="municipio">Municipio:</label>
-                <select id="municipio" name="municipio" required>
-                    <option value="">Seleccione un municipio</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="colonia">Colonia:</label>
-                <select id="colonia" name="colonia" required>
-                    <option value="">Seleccione una colonia</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="codigo_postal">Código Postal:</label>
-                <input type="text" id="codigo_postal" name="codigo_postal" required>
-            </div>
-            <div class="form-group">
-                <label for="num_personas">Número de Personas:</label>
-                <input type="number" id="num_personas" name="num_personas" required>
-            </div>
-            <div class="form-group">
-                <label for="cumplido">Cumplido:</label>
-                <input type="checkbox" id="cumplido" name="cumplido">
-            </div>
-            <div class="form-group">
-                <label for="seccion">Sección:</label>
-                <select id="seccion" name="seccion" required>
-                    <option value="">Seleccione una sección</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <button type="submit">Guardar Servicio</button>
-            </div>
-        </form>
-        <?php if (isset($message)): ?>
-            <p><?php echo $message; ?></p>
-        <?php endif; ?>
-    </div>
+    <header>
+        <div class="logo">Sistema SAG</div>
+        <nav>
+            <ul>
+                <li><a href="admin.php">Inicio</a></li>
+                <li><a href="register_service.php" class="active">Registrar Servicio</a></li>
+                <li><a href="logout.php">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="form-container">
+            <h1>Registrar Nuevo Servicio</h1>
+            <form action="register_service.php" method="POST" id="serviceForm">
+                <div class="form-group">
+                    <label for="direccion_general">Dirección General:</label>
+                    <input type="text" id="direccion_general" name="direccion_general" placeholder="Ingrese la dirección general" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_captura">Fecha de Captura:</label>
+                    <input type="date" id="fecha_captura" name="fecha_captura" required>
+                </div>
+                <div class="form-group">
+                    <label for="area_responsable">Área Responsable:</label>
+                    <input type="text" id="area_responsable" name="area_responsable" placeholder="Ingrese el área responsable" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre_completo">Nombre Completo:</label>
+                    <input type="text" id="nombre_completo" name="nombre_completo" placeholder="Nombre completo del solicitante" required>
+                </div>
+                <div class="form-group">
+                    <label for="clave_elector">Clave de Elector:</label>
+                    <input type="text" id="clave_elector" name="clave_elector" placeholder="Clave de elector" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" name="telefono" placeholder="Número de teléfono" required>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select id="estado" name="estado">
+                        <option value="">Seleccione un estado</option>
+                        <!-- Opciones dinámicas -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="municipio">Municipio:</label>
+                    <select id="municipio" name="municipio">
+                        <option value="">Seleccione un municipio</option>
+                        <!-- Opciones dinámicas -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="colonia">Colonia:</label>
+                    <select id="colonia" name="colonia">
+                    
+                </div>
+                <div class="form-group">
+                    <label for="codigo_postal">Código Postal:</label>
+                    <input type="text" id="codigo_postal" name="codigo_postal" placeholder="Código postal" required>
+                </div>
+                <button type="submit" class="button">Registrar Servicio</button>
+                <a href="admin.php" class="button-secondary">Regresar</a>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Sistema SAG. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>

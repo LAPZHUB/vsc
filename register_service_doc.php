@@ -75,8 +75,11 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Documentos</title>
-    <link rel="stylesheet" href="rservice_doc.css">
+    <title>Registrar Documentación de Servicio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
     <script>
         function initMap() {
@@ -102,51 +105,55 @@ $conn->close();
 <body onload="initMap()">
     <div class="form-container">
         <h1>Registrar Documentos Complementarios</h1>
-        <form action="register_service_doc.php" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="id_cliente">ID Cliente:</label>
-                <input type="text" id="id_cliente" name="id_cliente" required>
-            </div>
-            <div id="map" style="height: 400px; width: 100%;"></div>
-            <div class="form-group">
-                <label for="latitud">Latitud:</label>
-                <input type="text" id="latitud" name="latitud" readonly required>
-            </div>
-            <div class="form-group">
-                <label for="longitud">Longitud:</label>
-                <input type="text" id="longitud" name="longitud" readonly required>
-            </div>
-            <div class="form-group">
-                <label for="escrito_solicitud_doc">Escrito Solicitud:</label>
-                <input type="file" id="escrito_solicitud_doc" name="escrito_solicitud_doc" required>
-            </div>
-            <div class="form-group">
-                <label for="ine_anverso">INE Anverso:</label>
-                <input type="file" id="ine_anverso" name="ine_anverso" required>
-            </div>
-            <div class="form-group">
-                <label for="ine_reverso">INE Reverso:</label>
-                <input type="file" id="ine_reverso" name="ine_reverso" required>
-            </div>
-            <div class="form-group">
-                <label for="comprobante_domicilio">Comprobante de Domicilio:</label>
-                <input type="file" id="comprobante_domicilio" name="comprobante_domicilio" required>
-            </div>
-            <div class="form-group">
-                <label for="foto_lugar">Foto del Lugar:</label>
-                <input type="file" id="foto_lugar" name="foto_lugar" required>
-            </div>
-            <div class="form-group">
-                <label for="otro_doc">Otro Documento (Opcional):</label>
-                <input type="file" id="otro_doc" name="otro_doc">
-            </div>
-            <div class="form-group">
-                <button type="submit">Guardar Documentos</button>
-            </div>
-        </form>
-        <?php if (isset($message)): ?>
-            <p><?php echo $message; ?></p>
-        <?php endif; ?>
-    </div>
+        </head>
+<body>
+    <header>
+        <div class="logo">Sistema SAG</div>
+        <nav>
+            <ul>
+                <li><a href="admin.php">Inicio</a></li>
+                <li><a href="register_service_doc.php" class="active">Documentación de Servicio</a></li>
+                <li><a href="logout.php">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="form-container">
+            <h1>Registrar Documentación de Servicio</h1>
+            <form action="register_service_doc.php" method="POST" enctype="multipart/form-data" id="serviceDocForm">
+                <div class="form-group">
+                    <label for="escrito_solicitud_doc">Escrito de Solicitud:</label>
+                    <input type="file" id="escrito_solicitud_doc" name="escrito_solicitud_doc" required>
+                </div>
+                <div class="form-group">
+                    <label for="ine_anverso">INE (Anverso):</label>
+                    <input type="file" id="ine_anverso" name="ine_anverso" required>
+                </div>
+                <div class="form-group">
+                    <label for="ine_reverso">INE (Reverso):</label>
+                    <input type="file" id="ine_reverso" name="ine_reverso" required>
+                </div>
+                <div class="form-group">
+                    <label for="foto_lugar">Fotografía del Lugar:</label>
+                    <input type="file" id="foto_lugar" name="foto_lugar">
+                </div>
+                <div class="form-group">
+                    <label for="comprobante_domicilio">Comprobante de Domicilio:</label>
+                    <input type="file" id="comprobante_domicilio" name="comprobante_domicilio">
+                </div>
+                <div class="form-group">
+                    <label for="otro_doc">Otro Documento:</label>
+                    <input type="file" id="otro_doc" name="otro_doc">
+                </div>
+                <button type="submit" class="button">Registrar Documentación</button>
+                <a href="register_service.php" class="button-secondary">Regresar</a>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Sistema SAG. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>
