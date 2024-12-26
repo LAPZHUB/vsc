@@ -23,7 +23,7 @@ if (isset($_GET['action'])) {
             // Obtener lista de distritos federales
             if (isset($_POST['ID_ESTADO'])) {
                 $estado_id = intval($_POST['ID_ESTADO']);
-                $query = "SELECT ID_DISTRITO_FEDERAL, CABECERA_DISTRITAL_FEDERAL FROM ID_DISTRITO_FEDERAL WHERE ID_ESTADO = $estado_id ORDER BY CABECERA_DISTRITAL_FEDERAL";
+                $query = "SELECT ID_DISTRITO_FEDERAL, CABECERA_DISTRITAL_FEDERAL FROM distritos_federales WHERE ID_ESTADO = $estado_id ORDER BY CABECERA_DISTRITAL_FEDERAL";
                 $result = $conn->query($query);
 
                 if ($result) {

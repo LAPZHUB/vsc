@@ -7,7 +7,7 @@ if (isset($_GET['ID_ESTADO'])) {
 
     try {
         // Consultar los distritos federales basados en el estado seleccionado
-        $query = "SELECT ID_DISTRITO_FEDERAL, CABECERA_DISTRITAL_FEDERAL FROM distritos_federales WHERE ID_ESTADO = ? ORDER BY NOMBRE_ESTADO";
+        $query = "SELECT ID_DISTRITO_FEDERAL, CABECERA_DISTRITAL_FEDERAL FROM distritos_federales WHERE ID_ESTADO = ? ORDER BY ID_ESTADO";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $ID_ESTADO);
         $stmt->execute();
