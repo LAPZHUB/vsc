@@ -1,34 +1,23 @@
 <?php
-header('Content-Type: application/json');
-include 'db.php'; // Archivo de conexión a la base de datos
+include 'db.php'; // Conexión a la base de datos
 
-if (isset($_GET['ID_ESTADO'])) {
-    $estado_id = intval($_GET['ID_ESTADO']);
+if (isset($_POST['ID_ESTADO'])) {
+    $ID_ESTADO = intval($_POST['ID_ESTADO']);
+    $query = "SELECT ID_DISTIRTO_FEDERAL, CABECERA_DISTIRTAL_FEDERAL 
+              FROM distritos_federales 
+              WHERE ID_ESTADO = $ID_ESTADO 
+              ORDER BY CABECERA_DISTIRTAL_FEDERAL";
+    $result = $conn->query($query);
 
-    try {
-        // Consultar los distritos federales basados en el estado seleccionado
-        $query = "SELECT ID_ESTADO, ID_DISTRITO_FEDERAL, CABECERA_DISTRITAL_FEDERAL FROM distritos_federales ORDER BY ID_ESTADO AND ID_DISTRITO_FEDERAL";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $ID_ESTADO);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $distritos_federales = [];
+    if ($result) {
         while ($row = $result->fetch_assoc()) {
-            $distritos_federales[] = [
-                'ID_DISTRITO_FEDERAL' => $row['ID_DISTRITO_FEDERAL'],
-                'CABECERA_DISTRITAL_FEDERAL' => $row['CABECERA_DISTRITAL_FEDERAL']
-            ];
+            echo '<option value="' . $row['ID_DISTIRTO_FEDERAL'] . '">' . $row['CABECERA_DISTIRTAL_FEDERAL'] . '</option>';
         }
-
-        echo json_encode($distritos_federales);
-    } catch (Exception $e) {
-        echo json_encode(['error' => 'Error al obtener los distritos federales: ' . $e->getMessage()]);
+    } else {
+        echo '<option value="">Error al cargar distritos federales</option>';
     }
-
-    $stmt->close();
 } else {
-    echo json_encode(['error' => 'No se proporcionó el estado ID']);
+    echo '<option value="">Estado no especificado</option>';
 }
 
 $conn->close();
