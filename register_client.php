@@ -2,180 +2,186 @@
 session_start();
 include 'db.php'; // Conexión a la base de datos
 
-// Verificar que el usuario esté autenticado
+// Verificar que el usuario esté autenticado y tenga el rol adecuado
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
     header('Location: login.html');
     exit();
 }
 
-// Procesar el formulario al ser enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $company_name = $_POST['company_name'];
-    $contact_person = $_POST['contact_person'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
     $phone = $_POST['phone'];
     $address = $_POST['address'];
-    $estado = $_POST['estado'];
-    $distrito_federal = $_POST['distrito_federal'];
-    $distrito_local = $_POST['distrito_local'];
-    $municipio = $_POST['municipio'];
-   
 
     // Preparar la consulta para insertar el nuevo cliente
-    $stmt = $conn->prepare("INSERT INTO clients (company_name, contact_person, phone, address, estado_id, municipio_id, distrito_federal_id, distrito_local_id, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssiiiii", $company_name, $contact_person, $phone, $address, $estado, $municipio, $distrito_federal, $distrito_local, $_SESSION['user_id']);
+    $stmt = $conn->prepare("INSERT INTO clients (name, email, phone, address) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $name, $email, $phone, $address);
 
     if ($stmt->execute()) {
-        header("Location: index_clients.php?msg=Nuevo cliente registrado exitosamente");
+        $message = "Cliente registrado correctamente.";
     } else {
-        echo "Error: " . $stmt->error;
+        if ($stmt->errno == 1062) { // Código de error para entrada duplicada
+            $message = "Error: El correo electrónico ya está registrado.";
+        } else {
+            $message = "Error al registrar el cliente: " . $stmt->error;
+        }
     }
+
     $stmt->close();
 }
+$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Nuevo Cliente</title>
     <link rel="stylesheet" href="rclient.css">
-    <link rel="stylesheet" href="bootstrap.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    
-    <title>Registrar Cliente</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(0deg, rgb(1, 32, 56) 16%, rgb(30, 77, 105) 89%);
+        /* Estilos para la ventana flotante */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); /* Fondo oscuro */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-$(document).ready(function () {
-    // Cargar estados al cargar la página
-    $.ajax({
-        url: 'ajax.php?action=get_estado',
-        method: 'GET',
-        success: function (data) {
-            $('#estado').append(data);
-        }
-    });
-
-    // Manejar cambios en el estado
-    $('#estado').change(function () {
-        const ID_ESTADO = $(this).val();
-        if (ID_ESTADO) {
-            // Cargar distritos federales
+        $(document).ready(function () {
+            // Cargar estados al cargar la página
             $.ajax({
-                url: 'ajax.php',
-                method: 'POST',
-                data: { action: 'get_df', ID_ESTADO: ID_ESTADO },
+                url: 'ajax.php?action=get_estado',
+                method: 'GET',
                 success: function (data) {
-                    $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
+                    $('#estado').append(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Error al cargar estados:', textStatus, errorThrown);
                 }
             });
 
-            // Cargar distritos locales
-            $.ajax({
-                url: 'ajax.php',
-                method: 'POST',
-                data: { action: 'get_dl', ID_ESTADO: ID_ESTADO },
-                success: function (data) {
-                    $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
-                }
-            });
+            // Manejar cambios en el estado
+            $('#estado').change(function () {
+                const ID_ESTADO = $(this).val();
+                if (ID_ESTADO) {
+                    // Cargar distritos federales
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_df', ID_ESTADO: ID_ESTADO },
+                        success: function (data) {
+                            $('#distrito_federal').html('<option value="">Seleccione un distrito federal</option>' + data);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error al cargar distritos federales:', textStatus, errorThrown);
+                        }
+                    });
 
-            // Cargar municipios
-            $.ajax({
-                url: 'ajax.php',
-                method: 'POST',
-                data: { action: 'get_municipios', ID_ESTADO: ID_ESTADO },
-                success: function (data) {
-                    $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
+                    // Cargar distritos locales
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_dl', ID_ESTADO: ID_ESTADO },
+                        success: function (data) {
+                            $('#distrito_local').html('<option value="">Seleccione un distrito local</option>' + data);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error al cargar distritos locales:', textStatus, errorThrown);
+                        }
+                    });
+
+                    // Cargar municipios
+                    $.ajax({
+                        url: 'ajax.php',
+                        method: 'POST',
+                        data: { action: 'get_municipios', ID_ESTADO: ID_ESTADO },
+                        success: function (data) {
+                            $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.error('Error al cargar municipios:', textStatus, errorThrown);
+                        }
+                    });
                 }
             });
-        }
-    });
-});
-</script>
+        });
+    </script>
 </head>
 <body>
-    <div class="container py-4 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col col-xl-10">
-                <div class="card" style="border-radius: 1rem; border: none">
-                    <div class="row g-0">
-                        <div class="col-md-6 col-lg-5 d-none d-md-block">
-                            <img src="img/skyscrapers4.jpg" alt="Formulario de registro" class="img-fluid" style="border-radius: 1rem 0 0 1rem;"/>
-                        </div>
-                        <div class="col-md-6 col-lg-7 d-flex align-items-center">
-                            <div class="card-body p-4 p-lg-5 text-black">
-                                <form action="register_client.php" method="POST">
-                                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Registrar Nuevo Cliente</h5>
+    <header>
+        <h1>Registrar Nuevo Cliente</h1>
+    </header>
+    <div class="form-container">
+        <form action="register_client.php" method="POST" onsubmit="return showModal(this)">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" name="name" required>
 
-                                    <div class="form-group mb-3">
-                                        <label for="company_name">Nombre de la Empresa:</label>
-                                        <input type="text" id="company_name" name="company_name" class="form-control" required>
-                                    </div>
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" required>
 
-                                    <div class="form-group mb-3">
-                                        <label for="contact_person">Persona de Contacto:</label>
-                                        <input type="text" id="contact_person" name="contact_person" class="form-control" required>
-                                    </div>
+            <label for="phone">Teléfono:</label>
+            <input type="tel" id="phone" name="phone">
 
-                                    <div class="form-group mb-3">
-                                        <label for="phone">Teléfono:</label>
-                                        <input type="tel" id="phone" name="phone" class="form-control" required>
-                                    </div>
+            <label for="address">Dirección:</label>
+            <textarea id="address" name="address"></textarea>
 
-                                    <div class="form-group mb-3">
-                                        <label for="address">Dirección:</label>
-                                        <textarea id="address" name="address" class="form-control" required></textarea>
-                                    </div>
+            <!-- Campos dependientes -->
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="">Seleccione un estado</option>
+                <!-- Opciones cargadas dinámicamente -->
+            </select>
 
-                                    <div class="form-group mb-3">
-                                        <label for="estado">Estado:</label>
-                                        <select id="estado" name="estado" class="form-control" required>
-                                            <option value="">Seleccione un estado</option>
-                                        </select>
-                                    </div>
+            <label for="distrito_federal">Distrito Federal:</label>
+            <select id="distrito_federal" name="distrito_federal" required>
+                <option value="">Seleccione un distrito federal</option>
+                <!-- Opciones cargadas dinámicamente -->
+            </select>
 
-                                    <div class="form-group mb-3">
-                                        <label for="distrito_federal">Distrito Federal:</label>
-                                        <select id="distrito_federal" name="distrito_federal" class="form-control" required>
-                                            <option value="">Seleccione un distrito federal</option>
-                                        </select>
-                                    </div>
+            <label for="distrito_local">Distrito Local:</label>
+            <select id="distrito_local" name="distrito_local" required>
+                <option value="">Seleccione un distrito local</option>
+                <!-- Opciones cargadas dinámicamente -->
+            </select>
 
-                                    <div class="form-group mb-3">
-                                        <label for="distrito_local">Distrito Local:</label>
-                                        <select id="distrito_local" name="distrito_local" class="form-control" required>
-                                            <option value="">Seleccione un distrito local</option>
-                                        </select>
-                                    </div>
+            <label for="municipio">Municipio:</label>
+            <select id="municipio" name="municipio" required>
+                <option value="">Seleccione un municipio</option>
+                <!-- Opciones cargadas dinámicamente -->
+            </select>
 
-                                    <div class="form-group mb-3">
-                                        <label for="municipio">Municipio:</label>
-                                        <select id="municipio" name="municipio" class="form-control" required>
-                                            <option value="">Seleccione un municipio</option>
-                                        </select>
-                                    </div>
-                                   
-                                    <div class="pt-1 mb-4">
-                                        <button class="btn btn-dark btn-lg btn-block" type="submit" name="submit">Registrar Cliente</button>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <button type="submit">Registrar Cliente</button>
+        </form>
+        <button onclick="goBack()">Regresar</button> <!-- Botón de regresar -->
     </div>
-</body>
-</html>
+
+    <!-- Ventana Flotante
+::contentReference[oaicite:0]{index=0}
