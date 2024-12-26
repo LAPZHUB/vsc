@@ -9,25 +9,30 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
+    $name = isset($_POST['name']) ? trim($_POST['name']) : null;
 
-    // Preparar la consulta para insertar el nuevo cliente
-    $stmt = $conn->prepare("INSERT INTO clients (name, email, phone, address) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $name, $email, $phone, $address);
-
-    if ($stmt->execute()) {
-        $message = "Cliente registrado correctamente.";
-    } else {
-        if ($stmt->errno == 1062) { // Código de error para entrada duplicada
-            $message = "Error: El correo electrónico ya está registrado.";
-        } else {
-            $message = "Error al registrar el cliente: " . $stmt->error;
-        }
+    // Validar que el campo 'name' no esté vacío
+    if (empty($name)) {
+        echo "El campo 'Nombre' es obligatorio.";
+        exit();
     }
 
+    // Otros datos
+    $ID_ESTADO = isset($_POST['estado']) ? intval($_POST['estado']) : null;
+    $DF = isset($_POST['distrito_federal']) ? intval($_POST['distrito_federal']) : null;
+    $DL = isset($_POST['distrito_local']) ? intval($_POST['distrito_local']) : null;
+    $ID_MUNICIPIO = isset($_POST['municipio']) ? intval($_POST['municipio']) : null;
+
+    // Inserción en la base de datos
+    $query = "INSERT INTO clients (name, ID_ESTADO, DF, DL, ID_MUNICIPIO) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("siiii", $name, $ID_ESTADO, $DF, $DL, $ID_MUNICIPIO);
+
+    if ($stmt->execute()) {
+        echo "Cliente registrado correctamente.";
+    } else {
+        echo "Error al registrar el cliente: " . $stmt->error;
+    }
     $stmt->close();
 }
 $conn->close();
@@ -157,7 +162,8 @@ $conn->close();
             <label for="estado">Estado:</label>
             <select id="estado" name="estado" required>
                 <option value="">Seleccione un estado</option>
-                <!-- Opciones cargadas dinámicamente -->
+                <!-- Opciones dinámicas cargadas desde AJAX -->
+                <!-- El valor será el ID_ESTADO, pero el texto mostrado será el NOMBRE_ESTADO -->
             </select>
 
             <label for="distrito_federal">Distrito Federal:</label>

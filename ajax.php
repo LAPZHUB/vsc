@@ -6,10 +6,9 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
 
     switch ($action) {
         case 'get_estado':
-            // Obtener lista de estados
             $query = "SELECT ID_ESTADO, NOMBRE_ESTADO FROM estados ORDER BY NOMBRE_ESTADO";
             $result = $conn->query($query);
-
+        
             if ($result) {
                 while ($row = $result->fetch_assoc()) {
                     echo '<option value="' . $row['ID_ESTADO'] . '">' . $row['NOMBRE_ESTADO'] . '</option>';
@@ -18,7 +17,7 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
                 echo '<option value="">Error al cargar estados</option>';
             }
             break;
-
+        
             case 'get_df':
                 if (isset($_POST['ID_ESTADO'])) {
                     $estado_id = intval($_POST['ID_ESTADO']);
@@ -39,6 +38,7 @@ if (isset($_GET['action']) || isset($_POST['action'])) {
                     echo '<option value="">Estado no especificado</option>';
                 }
                 break;
+            
             
 
             case 'get_dl':
