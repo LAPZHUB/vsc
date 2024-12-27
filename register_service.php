@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $calle = $_POST['calle'];
     $num_interior = $_POST['num_interior'];
     $num_exterior = $_POST['num_exterior'];
-    $estado_id = $_POST['estado'];
-    $municipio_id = $_POST['municipio'];
-    $colonia_id = $_POST['colonia'];
+    $ID_ESTADO = $_POST['estado'];
+    $ID_MUNICIPIO = $_POST['municipio'];
+    $NOMBRE_COLONIA = $_POST['colonia'];
     $codigo_postal = $_POST['codigo_postal'];
     $num_personas = $_POST['num_personas'];
     $cumplido = isset($_POST['cumplido']) ? 1 : 0;
@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Por favor completa todos los campos obligatorios.";
     } else {
         // Insertar datos en la base de datos
-        $stmt = $conn->prepare("INSERT INTO servicios (direccion_general, fecha_captura, area_responsable, nombre_completo, clave_elector, telefono, calle, num_interior, num_exterior, estado_id, municipio_id, colonia_id, codigo_postal, num_personas, cumplido, seccion_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssiiiisiii", $direccion_general, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $estado_id, $municipio_id, $colonia_id, $codigo_postal, $num_personas, $cumplido, $seccion_id);
+        $stmt = $conn->prepare("INSERT INTO servicios (direccion_general, fecha_captura, area_responsable, nombre_completo, clave_elector, telefono, calle, num_interior, num_exterior, ID_ESTADO, ID_MUNICIPIO, COLONIA, codigo_postal, num_personas, cumplido, seccion_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssiiiisiii", $direccion_general, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $ID_ESTADO, $ID_MUNICIPIO, $NOMBRE_COLONIA, $codigo_postal, $num_personas, $cumplido, $seccion_id);
 
         if ($stmt->execute()) {
             header('Location: register_service_doc.php?id=' . $conn->insert_id);
@@ -150,7 +150,7 @@ $conn->close();
                     $.ajax({
                         url: 'ajax.php',
                         method: 'POST',
-                        data: { action: 'get_colonias', ID_ESTADO: ID_ESTADO },
+                        data: { action: 'get_colonias', ID_MUNICIPIO: ID_MUNICIPIO },
                         success: function (data) {
                             $('#colonia').html('<option value="">Seleccione una colonia</option>' + data);
                         },
