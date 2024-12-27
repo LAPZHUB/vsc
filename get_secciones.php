@@ -1,11 +1,13 @@
 <?php
 include 'db.php';
 
-if (isset($_POST['colonia'])) {
-    $colonia_id = $_POST['colonia'];
-    $query = "SELECT SECCION, NOMBRE FROM secciones WHERE ID_COLONIA = ?";
+if (isset($_POST['MUNICIPIO'])) {
+    $ID_MUNICIPIO = $_POST['ID_MUNICIPIO'];
+    $query = "SELECT SECCION 
+    FROM secciones 
+    WHERE ID_MUNICIPIO=$ID_MUNICIPIO";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $colonia_id);
+    $stmt->bind_param("i", $ID_MUNICIPIO);
     $stmt->execute();
     $result = $stmt->get_result();
 

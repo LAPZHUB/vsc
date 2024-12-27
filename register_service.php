@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $num_interior = $_POST['num_interior'];
     $num_exterior = $_POST['num_exterior'];
     $ID_ESTADO = $_POST['estado'];
-    $ID_MUNICIPIO = $_POST['municipio'];
+    $ID_MUNICIPIO = $_POST['ID_MUNICIPIO'];
     $NOMBRE_COLONIA = $_POST['colonia'];
     $codigo_postal = $_POST['codigo_postal'];
     $num_personas = $_POST['num_personas'];
