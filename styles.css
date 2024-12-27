@@ -1,184 +1,183 @@
 /* ===== Estilos Generales ===== */
-body {
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
     background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-main, header, footer {
-    max-width: 1100px; /* Ajusta el ancho máximo según tus necesidades */
-    margin: 0 auto;    /* Centra el contenido */
-    padding: 0 20px;   /* Margen interno para evitar que el contenido toque los bordes */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
-
 
 /* ===== Encabezado ===== */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #333;
+    background-color: #4CAF50;
     color: #fff;
+    padding: 10px 0;
 }
 
 header .logo {
-    font-size: 24px;
+    font-size: 1.5em;
     font-weight: bold;
-}
-
-header nav ul {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
-}
-
-header nav ul li {
-    margin-left: 20px;
-}
-
-header nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-header nav ul li a:hover,
-header nav ul li a.active {
-    color: #ff9800;
-}
-
-/* ===== Formulario ===== */
-#form-container {
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-#form-container h1 {
-    font-size: 24px;
-    color: #333;
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+/* ===== Formulario ===== */
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.form-container h1 {
     margin-bottom: 20px;
+    font-size: 1.8em;
+    text-align: center;
 }
 
 .form-group {
     margin-bottom: 15px;
-    text-align: left;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+    font-weight: 500;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group input[type="password"],
+.form-group select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
 }
 
-/* ===== Botones ===== */
-button.button {
-    width: 100%;
-    padding: 10px;
-    background-color: #333;
+.form-group input[type="file"] {
+    padding: 5px;
+}
+
+.button {
+    background-color: #4CAF50;
     color: #fff;
+    padding: 10px 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-}
-
-button.button:hover {
-    background-color: #555;
-}
-
-a.button-secondary {
+    font-size: 1em;
     display: inline-block;
     text-align: center;
-    padding: 10px;
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+
+.button-secondary {
+    background-color: #f1f1f1;
+    color: #333;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    display: inline-block;
+    text-align: center;
+    margin-left: 10px;
+}
+
+.button-secondary:hover {
     background-color: #ddd;
-    color: #333;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 10px;
 }
 
-a.button-secondary:hover {
-    background-color: #bbb;
-}
-
-/* ===== Estilos Específicos ===== */
-
-/* ===== Página de Administración ===== */
-#admin-container {
-    max-width: 900px;
-    margin: 30px auto;
-    text-align: center;
-}
-
-.admin-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.option-card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    width: 250px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* ===== Página de Inicio de Sesión ===== */
-#login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f9f9f9;
-}
-
-.login-card {
+/* ===== Mapa ===== */
+#map {
     width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 400px;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+/* ===== Pie de Página ===== */
+footer {
+    background-color: #333;
+    color: #fff;
     text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
 }
 
-.login-card h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
+footer p {
+    margin: 0;
+    font-size: 0.9em;
 }
 
-/* ===== Responsividad ===== */
-@media screen and (max-width: 768px) {
-    .admin-options {
+/* ===== Media Queries para Responsividad ===== */
+@media (max-width: 768px) {
+    nav ul {
         flex-direction: column;
+        align-items: center;
     }
 
-    .option-card {
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    .button,
+    .button-secondary {
         width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    header .logo {
+        font-size: 1.2em;
+    }
+
+    .form-container h1 {
+        font-size: 1.5em;
     }
 }

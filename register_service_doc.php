@@ -22,6 +22,13 @@ function procesarArchivo($archivo, $uploads_dir, $campo, $id_cliente, $id_usuari
     if ($archivo && $archivo['tmp_name']) {
         $timestamp = date('Y-m-d_H-i-s');
         $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+
+        // Validación del formato del archivo
+        $formatos_permitidos = ['pdf', 'jpg', 'jpeg', 'png'];
+        if (!in_array(strtolower($extension), $formatos_permitidos)) {
+            return "Formato no permitido para $campo. Solo se permiten: " . implode(', ', $formatos_permitidos);
+        }
+
         $nombre_unico = "{$campo}_{$id_cliente}_{$id_usuario}_{$timestamp}.$extension";
         $ruta_destino = $uploads_dir . $nombre_unico;
         move_uploaded_file($archivo['tmp_name'], $ruta_destino);
@@ -29,13 +36,15 @@ function procesarArchivo($archivo, $uploads_dir, $campo, $id_cliente, $id_usuari
     }
     return null;
 }
-
+?>
+<?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recoger datos del formulario
     $latitud = $_POST['latitud'];
     $longitud = $_POST['longitud'];
     $id_cliente = $_POST['id_cliente']; // ID del cliente
     $id_usuario = $_SESSION['user_id']; // ID del usuario
+
     $escrito_solicitud_doc = $_FILES['escrito_solicitud_doc'];
     $ine_anverso = $_FILES['ine_anverso'];
     $ine_reverso = $_FILES['ine_reverso'];
@@ -72,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -82,7 +90,7 @@ $conn->close();
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp9_Jgz6Ssq0JEEQnsr5ZnMVT6LKh15BQ&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARV6H4a893nq_zdAVM0nIMv00uCoY-RDQ&libraries=places"></script>
     <script>
         function initMap() {
             const defaultLocation = { lat: 19.4326, lng: -99.1332 }; // Ciudad de México
@@ -105,40 +113,64 @@ $conn->close();
     </script>
 </head>
 <body onload="initMap()">
-    <div class="form-container">
-        <h1>Registrar Documentos Complementarios</h1>
-        <form action="register_service_doc.php" method="POST" enctype="multipart/form-data" id="serviceDocForm">
-            <fieldset>
-                <legend>Documentos del Servicio</legend>
-                <div class="form-group">
-                    <label for="escrito_solicitud_doc">Escrito de Solicitud:</label>
-                    <input type="file" id="escrito_solicitud_doc" name="escrito_solicitud_doc" required>
-                </div>
-                <div class="form-group">
-                    <label for="ine_anverso">INE (Anverso):</label>
-                    <input type="file" id="ine_anverso" name="ine_anverso" required>
-                </div>
-                <div class="form-group">
-                    <label for="ine_reverso">INE (Reverso):</label>
-                    <input type="file" id="ine_reverso" name="ine_reverso" required>
-                </div>
-                <div class="form-group">
-                    <label for="foto_lugar">Fotografía del Lugar:</label>
-                    <input type="file" id="foto_lugar" name="foto_lugar">
-                </div>
-                <div class="form-group">
-                    <label for="comprobante_domicilio">Comprobante de Domicilio:</label>
-                    <input type="file" id="comprobante_domicilio" name="comprobante_domicilio">
-                </div>
-                <div class="form-group">
-                    <label for="otro_doc">Otro Documento:</label>
-                    <input type="file" id="otro_doc" name="otro_doc">
-                </div>
-            </fieldset>
-            <button type="submit" class="button">Registrar Documentación</button>
-            <a href="register_service.php" class="button-secondary">Regresar</a>
-        </form>
-    </div>
+            <header>
+                    <div class="logo">Sistema SAG</div>
+                    <nav>
+                        <ul>
+                            <li><a href="admin.php">Inicio</a></li>
+                            <li><a href="register_client.php" class="active">Registrar Cliente</a></li>
+                            <li><a href="logout.php">Cerrar Sesión</a></li>
+                        </ul>
+                    </nav>
+                </header>
+    <Mmain> 
+            <div class="form-container">
+                <h1>Registrar Documentos Complementarios</h1>
+                <form action="register_service_doc.php" method="POST" enctype="multipart/form-data" id="serviceDocForm">
+                    <fieldset>
+                        <legend>Documentos del Servicio</legend>
+                        <div class="form-group">
+                            <label for="escrito_solicitud_doc">Escrito de Solicitud:</label>
+                            <input type="file" id="escrito_solicitud_doc" name="escrito_solicitud_doc" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ine_anverso">INE (Anverso):</label>
+                            <input type="file" id="ine_anverso" name="ine_anverso" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ine_reverso">INE (Reverso):</label>
+                            <input type="file" id="ine_reverso" name="ine_reverso" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="foto_lugar">Fotografía del Lugar:</label>
+                            <input type="file" id="foto_lugar" name="foto_lugar">
+                        </div>
+                        <div class="form-group">
+                            <label for="comprobante_domicilio">Comprobante de Domicilio:</label>
+                            <input type="file" id="comprobante_domicilio" name="comprobante_domicilio">
+                        </div>
+                        <div class="form-group">
+                            <label for="otro_doc">Otro Documento:</label>
+                            <input type="file" id="otro_doc" name="otro_doc">
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Ubicación</legend>
+                        <div id="map" style="height: 300px; width: 100%; margin-bottom: 20px;"></div>
+                        <div class="form-group">
+                            <label for="latitud">Latitud:</label>
+                            <input type="text" id="latitud" name="latitud" readonly required>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitud">Longitud:</label>
+                            <input type="text" id="longitud" name="longitud" readonly required>
+                        </div>
+                    </fieldset>
+                    <button type="submit" class="button">Registrar Documentación</button>
+                    <a href="register_service.php" class="button-secondary">Regresar</a>
+                </form>
+            </div>
+        <main>    
     <footer>
         <p>&copy; 2024 Sistema SAG. Todos los derechos reservados.</p>
     </footer>
