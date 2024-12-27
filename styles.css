@@ -15,6 +15,15 @@ body {
     min-height: 100vh;
 }
 
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .container {
     width: 90%;
     max-width: 1200px;
@@ -31,7 +40,6 @@ header {
     text-align: center;
     position: relative; /* Asegura que los elementos internos se posicionen correctamente */
 }
-
 
 header .logo {
     font-size: 1.5em;
@@ -66,6 +74,7 @@ nav ul li a:hover {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+    max-width: 800px;
 }
 
 .form-container h1 {
@@ -81,7 +90,7 @@ nav ul li a:hover {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .form-group input[type="text"],
@@ -89,7 +98,7 @@ nav ul li a:hover {
 .form-group input[type="password"],
 .form-group select {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
@@ -100,7 +109,7 @@ nav ul li a:hover {
 }
 
 .button {
-    background-color: #333;
+    background-color: #007bff;
     color: #fff;
     padding: 10px 15px;
     border: none;
@@ -109,10 +118,11 @@ nav ul li a:hover {
     font-size: 1em;
     display: inline-block;
     text-align: center;
+    text-decoration: none;
 }
 
 .button:hover {
-    background-color: #333;
+    background-color: #0056b3;
 }
 
 .button-secondary {
