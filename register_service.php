@@ -195,6 +195,12 @@ $conn->close();
                     <option value="">Seleccione una sección</option>
                 </select>
             </div>
+            <div class="form-group">
+        <label for="cumplido">
+            <input type="checkbox" id="cumplido" name="cumplido">
+            ¿Cumplido?
+        </label>        
+            </div>
             <button type="submit">Registrar Servicio</button>
         </form>
     </section>
