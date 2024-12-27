@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $calle = $_POST['calle'];
     $num_interior = $_POST['num_interior'];
     $num_exterior = $_POST['num_exterior'];
-    $ID_ESTADO = $_POST['estado'];
-    $ID_MUNICIPIO = $_POST['ID_MUNICIPIO'];
-    $NOMBRE_COLONIA = $_POST['colonia'];
+    $estado_id = $_POST['estado'];
+    $municipio_id = $_POST['municipio'];
+    $colonia_id = $_POST['colonia'];
     $codigo_postal = $_POST['codigo_postal'];
     $num_personas = $_POST['num_personas'];
     $cumplido = isset($_POST['cumplido']) ? 1 : 0;
@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Por favor completa todos los campos obligatorios.";
     } else {
         // Insertar datos en la base de datos
-        $stmt = $conn->prepare("INSERT INTO servicios (direccion_general, fecha_captura, area_responsable, nombre_completo, clave_elector, telefono, calle, num_interior, num_exterior, ID_ESTADO, ID_MUNICIPIO, COLONIA, codigo_postal, num_personas, cumplido, seccion_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssiiiisiii", $direccion_general, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $ID_ESTADO, $ID_MUNICIPIO, $NOMBRE_COLONIA, $codigo_postal, $num_personas, $cumplido, $seccion_id);
+        $stmt = $conn->prepare("INSERT INTO servicios (direccion_general, fecha_captura, area_responsable, nombre_completo, clave_elector, telefono, calle, num_interior, num_exterior, estado_id, municipio_id, colonia_id, codigo_postal, num_personas, cumplido, seccion_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssiiiisiii", $direccion_general, $fecha_captura, $area_responsable, $nombre_completo, $clave_elector, $telefono, $calle, $num_interior, $num_exterior, $estado_id, $municipio_id, $colonia_id, $codigo_postal, $num_personas, $cumplido, $seccion_id);
 
         if ($stmt->execute()) {
             header('Location: register_service_doc.php?id=' . $conn->insert_id);
@@ -47,136 +47,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
 }
-
-// Manejo de AJAX para cargar estados, municipios, colonias y secciones dinámicamente
-if (isset($_GET['action']) && $_GET['action'] === 'get_estados') {
-    $query = "SELECT id, nombre FROM estados ORDER BY nombre";
-    $result = $conn->query($query);
-    while ($row = $result->fetch_assoc()) {
-        echo "<option value=\"" . $row['id'] . "\">" . $row['nombre'] . "</option>";
-    }
-    exit();
-}
-
-if (isset($_POST['action']) && $_POST['action'] === 'get_municipios') {
-    $estado_id = $_POST['estado_id'];
-    $query = "SELECT id, nombre FROM municipios WHERE estado_id = ? ORDER BY nombre";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $estado_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        echo "<option value=\"" . $row['id'] . "\">" . $row['nombre'] . "</option>";
-    }
-    $stmt->close();
-    exit();
-}
-
-if (isset($_POST['action']) && $_POST['action'] === 'get_colonias') {
-    $municipio_id = $_POST['municipio_id'];
-    $query = "SELECT id, nombre FROM colonias WHERE municipio_id = ? ORDER BY nombre";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $municipio_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        echo "<option value=\"" . $row['id'] . "\">" . $row['nombre'] . "</option>";
-    }
-    $stmt->close();
-    exit();
-}
-
-if (isset($_POST['action']) && $_POST['action'] === 'get_secciones') {
-    $colonia_id = $_POST['colonia_id'];
-    $query = "SELECT id, nombre FROM secciones WHERE colonia_id = ? ORDER BY nombre";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $colonia_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        echo "<option value=\"" . $row['id'] . "\">" . $row['nombre'] . "</option>";
-    }
-    $stmt->close();
-    exit();
-}
-
 $conn->close();
 ?>
+  // Cargar estados al cargar la página
+<script>
+    $(document).ready(function () {
+        // Cargar estados al cargar la página
+        $.ajax({
+            url: 'get_estados.php',
+            method: 'GET',
+            success: function (data) {
+                $('#estado').html(data);
+            }
+        });
 
-<!-- HTML -->
+        // Cargar municipios al seleccionar un estado
+        $('#estado').change(function () {
+            const estadoId = $(this).val();
+            if (estadoId) {
+                $.ajax({
+                    url: 'get_municipios.php',
+                    method: 'POST',
+                    data: { estado_id: estadoId },
+                    success: function (data) {
+                        $('#municipio').html(data);
+                        $('#colonia').html('<option value="">Seleccione una colonia</option>');
+                        $('#seccion').html('<option value="">Seleccione una sección</option>');
+                    }
+                });
+            } else {
+                $('#municipio').html('<option value="">Seleccione un municipio</option>');
+                $('#colonia').html('<option value="">Seleccione una colonia</option>');
+                $('#seccion').html('<option value="">Seleccione una sección</option>');
+            }
+        });
+
+        // Cargar colonias y secciones al seleccionar un municipio
+        $('#municipio').change(function () {
+            const municipioId = $(this).val();
+            if (municipioId) {
+                // Cargar colonias
+                $.ajax({
+                    url: 'get_colonias.php',
+                    method: 'POST',
+                    data: { municipio_id: municipioId },
+                    success: function (data) {
+                        $('#colonia').html(data);
+                    }
+                });
+                // Cargar secciones
+                $.ajax({
+                    url: 'get_secciones.php',
+                    method: 'POST',
+                    data: { municipio_id: municipioId },
+                    success: function (data) {
+                        $('#seccion').html(data);
+                    }
+                });
+            } else {
+                $('#colonia').html('<option value="">Seleccione una colonia</option>');
+                $('#seccion').html('<option value="">Seleccione una sección</option>');
+            }
+        });
+    });
+</script>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Nuevo Cliente</title>
+    <title>Registrar Nuevo Servicio</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Cargar estados al cargar la página
-            $.ajax({
-                url: 'ajax.php?action=get_estado',
-                method: 'GET',
-                success: function (data) {
-                    $('#estado').append(data);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Error al cargar estados:', textStatus, errorThrown);
-                }
-            });
-
-             // Manejar cambios en el estado
-             $('#estado').change(function () {
-                const ID_ESTADO = $(this).val();
-                if (ID_ESTADO) {
-
-                            // Cargar municipios
-                            $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_municipios', ID_ESTADO: ID_ESTADO },
-                        success: function (data) {
-                            $('#municipio').html('<option value="">Seleccione un municipio</option>' + data);
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error('Error al cargar municipios:', textStatus, errorThrown);
-                        }
-                    });
-                
-                    // Cargar colonias
-                    $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_colonias', ID_MUNICIPIO: ID_MUNICIPIO },
-                        success: function (data) {
-                            $('#colonia').html('<option value="">Seleccione una colonia</option>' + data);
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error('Error al cargar colonias:', textStatus, errorThrown);
-                        }
-                    });
-               
-               
-                     // Cargar secciones
-                     $.ajax({
-                        url: 'ajax.php',
-                        method: 'POST',
-                        data: { action: 'get_secciones', ID_MUNICIPIO: ID_MUNICIPIO },
-                        success: function (data) {
-                            $('#seccion').html('<option value="">Seleccione una sección</option>' + data);
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.error('Error al cargar secciones:', textStatus, errorThrown);
-                        }
-                    });
-               
-                }
-            });
-        });
-    </script>
 </head>
 <body>
 <header>
@@ -246,18 +188,6 @@ $conn->close();
                 <select id="colonia" name="colonia" required>
                     <option value="">Seleccione una colonia</option>
                 </select>
-            </div>
-            <div class="form-group">
-                <label for="codigo_postal">Código Postal:</label>
-                <input type="text" id="codigo_postal" name="codigo_postal" required>
-            </div>
-            <div class="form-group">
-                <label for="num_personas">Número de Personas:</label>
-                <input type="number" id="num_personas" name="num_personas" required>
-            </div>
-            <div class="form-group">
-                <label for="cumplido">Cumplido:</label>
-                <input type="checkbox" id="cumplido" name="cumplido">
             </div>
             <div class="form-group">
                 <label for="seccion">Sección:</label>
