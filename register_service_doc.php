@@ -80,7 +80,7 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="script.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp9_Jgz6Ssq0JEEQnsr5ZnMVT6LKh15BQ&libraries=places"></script>
     <script>
         function initMap() {
             const defaultLocation = { lat: 19.4326, lng: -99.1332 }; // Ciudad de México

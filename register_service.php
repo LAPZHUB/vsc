@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 $conn->close();
 ?>
-  // Cargar estados al cargar la página
+  
 <script>
     $(document).ready(function () {
         // Cargar estados al cargar la página
