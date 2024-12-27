@@ -8,6 +8,28 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'superusuario') {
     exit();
 }
 
+// Función para crear el directorio del cliente
+function crearDirectorioCliente($id_cliente) {
+    $uploads_dir = "uploads/cliente_$id_cliente/";
+    if (!is_dir($uploads_dir)) {
+        mkdir($uploads_dir, 0777, true);
+    }
+    return $uploads_dir;
+}
+
+// Función para procesar archivos
+function procesarArchivo($archivo, $uploads_dir, $campo, $id_cliente, $id_usuario) {
+    if ($archivo && $archivo['tmp_name']) {
+        $timestamp = date('Y-m-d_H-i-s');
+        $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+        $nombre_unico = "{$campo}_{$id_cliente}_{$id_usuario}_{$timestamp}.$extension";
+        $ruta_destino = $uploads_dir . $nombre_unico;
+        move_uploaded_file($archivo['tmp_name'], $ruta_destino);
+        return $ruta_destino;
+    }
+    return null;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recoger datos del formulario
     $latitud = $_POST['latitud'];
@@ -26,34 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Por favor completa todos los campos obligatorios.";
     } else {
         // Crear carpeta específica para el cliente
-        $uploads_dir = "uploads/cliente_$id_cliente/";
-        if (!is_dir($uploads_dir)) {
-            mkdir($uploads_dir, 0777, true);
-        }
+        $uploads_dir = crearDirectorioCliente($id_cliente);
 
-        // Procesar documentos con nombres únicos
-        $timestamp = date('Y-m-d_H-i-s');
-
-        $escrito_solicitud_doc_path = $uploads_dir . "escrito_solicitud_doc_{$id_cliente}_{$id_usuario}_{$timestamp}." . pathinfo($escrito_solicitud_doc['name'], PATHINFO_EXTENSION);
-        move_uploaded_file($escrito_solicitud_doc['tmp_name'], $escrito_solicitud_doc_path);
-
-        $ine_anverso_path = $uploads_dir . "ine_anverso_{$id_cliente}_{$id_usuario}_{$timestamp}." . pathinfo($ine_anverso['name'], PATHINFO_EXTENSION);
-        move_uploaded_file($ine_anverso['tmp_name'], $ine_anverso_path);
-
-        $ine_reverso_path = $uploads_dir . "ine_reverso_{$id_cliente}_{$id_usuario}_{$timestamp}." . pathinfo($ine_reverso['name'], PATHINFO_EXTENSION);
-        move_uploaded_file($ine_reverso['tmp_name'], $ine_reverso_path);
-
-        $comprobante_domicilio_path = $uploads_dir . "comprobante_domicilio_{$id_cliente}_{$id_usuario}_{$timestamp}." . pathinfo($comprobante_domicilio['name'], PATHINFO_EXTENSION);
-        move_uploaded_file($comprobante_domicilio['tmp_name'], $comprobante_domicilio_path);
-
-        $foto_lugar_path = $uploads_dir . "foto_lugar_{$id_cliente}_{$id_usuario}_{$timestamp}." . pathinfo($foto_lugar['name'], PATHINFO_EXTENSION);
-        move_uploaded_file($foto_lugar['tmp_name'], $foto_lugar_path);
-
-        $otro_doc_path = null;
-        if ($otro_doc && $otro_doc['tmp_name']) {
-            $otro_doc_path = $uploads_dir . "otro_doc_{$id_cliente}_{$id_usuario}_{$timestamp}." . pathinfo($otro_doc['name'], PATHINFO_EXTENSION);
-            move_uploaded_file($otro_doc['tmp_name'], $otro_doc_path);
-        }
+        // Procesar documentos
+        $escrito_solicitud_doc_path = procesarArchivo($escrito_solicitud_doc, $uploads_dir, 'escrito_solicitud_doc', $id_cliente, $id_usuario);
+        $ine_anverso_path = procesarArchivo($ine_anverso, $uploads_dir, 'ine_anverso', $id_cliente, $id_usuario);
+        $ine_reverso_path = procesarArchivo($ine_reverso, $uploads_dir, 'ine_reverso', $id_cliente, $id_usuario);
+        $comprobante_domicilio_path = procesarArchivo($comprobante_domicilio, $uploads_dir, 'comprobante_domicilio', $id_cliente, $id_usuario);
+        $foto_lugar_path = procesarArchivo($foto_lugar, $uploads_dir, 'foto_lugar', $id_cliente, $id_usuario);
+        $otro_doc_path = procesarArchivo($otro_doc, $uploads_dir, 'otro_doc', $id_cliente, $id_usuario);
 
         // Actualizar en la base de datos
         $stmt = $conn->prepare("UPDATE servicios SET latitud = ?, longitud = ?, escrito_solicitud_doc = ?, ine_anverso = ?, ine_reverso = ?, comprobante_domicilio = ?, foto_lugar = ?, otro_doc = ? WHERE id = ?");
@@ -79,7 +82,6 @@ $conn->close();
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="script.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp9_Jgz6Ssq0JEEQnsr5ZnMVT6LKh15BQ&libraries=places"></script>
     <script>
         function initMap() {
@@ -105,23 +107,9 @@ $conn->close();
 <body onload="initMap()">
     <div class="form-container">
         <h1>Registrar Documentos Complementarios</h1>
-        </head>
-<body>
-    <header>
-        <div class="logo">Sistema SAG</div>
-        <nav>
-            <ul>
-                <li><a href="admin.php">Inicio</a></li>
-                <li><a href="register_service_doc.php" class="active">Documentación de Servicio</a></li>
-                <li><a href="logout.php">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="form-container">
-            <h1>Registrar Documentación de Servicio</h1>
-            <form action="register_service_doc.php" method="POST" enctype="multipart/form-data" id="serviceDocForm">
+        <form action="register_service_doc.php" method="POST" enctype="multipart/form-data" id="serviceDocForm">
+            <fieldset>
+                <legend>Documentos del Servicio</legend>
                 <div class="form-group">
                     <label for="escrito_solicitud_doc">Escrito de Solicitud:</label>
                     <input type="file" id="escrito_solicitud_doc" name="escrito_solicitud_doc" required>
@@ -146,12 +134,11 @@ $conn->close();
                     <label for="otro_doc">Otro Documento:</label>
                     <input type="file" id="otro_doc" name="otro_doc">
                 </div>
-                <button type="submit" class="button">Registrar Documentación</button>
-                <a href="register_service.php" class="button-secondary">Regresar</a>
-            </form>
-        </section>
-    </main>
-
+            </fieldset>
+            <button type="submit" class="button">Registrar Documentación</button>
+            <a href="register_service.php" class="button-secondary">Regresar</a>
+        </form>
+    </div>
     <footer>
         <p>&copy; 2024 Sistema SAG. Todos los derechos reservados.</p>
     </footer>
