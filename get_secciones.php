@@ -1,11 +1,11 @@
 <?php
 include 'db.php';
 
-if (isset($_POST['MUNICIPIO'])) {
+if (isset($_POST['ID_MUNICIPIO'])) {
     $ID_MUNICIPIO = $_POST['ID_MUNICIPIO'];
     $query = "SELECT SECCION 
     FROM secciones 
-    WHERE ID_MUNICIPIO=$ID_MUNICIPIO";
+    WHERE ID_MUNICIPIO= $ID_MUNICIPIO";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $ID_MUNICIPIO);
     $stmt->execute();
