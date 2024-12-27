@@ -132,7 +132,7 @@ $conn->close();
     </nav>
 </header>
 <main>
-    <section id="form-container">
+    <section class="form-container">
         <h1>Registrar Nuevo Servicio</h1>
         <form action="register_service.php" method="POST">
             <div class="form-group">

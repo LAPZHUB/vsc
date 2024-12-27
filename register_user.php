@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <main>
-        <section id="form-container">
+        <section class="form-container">
             <h1>Registrar Nuevo Usuario</h1>
             <form action="register_user.php" method="POST" id="userForm">
                 <div class="form-group">

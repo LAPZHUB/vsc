@@ -113,72 +113,70 @@ $conn->close();
             });
         });
     </script>
-</head>
-<body>
-    <header>
-        <div class="logo">Sistema SAG</div>
-        <nav>
-            <ul>
-                <li><a href="admin.php">Inicio</a></li>
-                <li><a href="register_client.php" class="active">Registrar Cliente</a></li>
-                <li><a href="logout.php">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="form-container">
-            <h1>Registrar Nuevo Cliente</h1>
-            <form action="register_client.php" method="POST" id="clientForm">
-                <div class="form-group">
-                    <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" placeholder="Nombre completo" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Correo Electrónico:</label>
-                    <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Teléfono:</label>
-                    <input type="text" id="phone" name="phone" placeholder="Teléfono" required>
-                </div>
-                <div class="form-group">
-                    <label for="address">Dirección:</label>
-                    <textarea id="address" name="address" placeholder="Dirección completa" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="estado">Estado:</label>
-                    <select id="estado" name="estado">
-                        <option value="">Seleccione un estado</option>
-                        <!-- Opciones dinámicas cargadas con AJAX -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="distrito_federal">Distrito Federal:</label>
-                    <select id="distrito_federal" name="distrito_federal">
-                        <option value="">Seleccione un distrito federal</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="distrito_local">Distrito Local:</label>
-                    <select id="distrito_local" name="distrito_local">
-                        <option value="">Seleccione un distrito local</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="municipio">Municipio:</label>
-                    <select id="municipio" name="municipio">
-                        <option value="">Seleccione un municipio</option>
-                    </select>
-                </div>
-                <button type="submit" class="button">Registrar Cliente</button>
-                <a href="admin.php" class="button-secondary">Regresar</a>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Sistema SAG. Todos los derechos reservados.</p>
-    </footer>
+    </head>
+    <body>
+        <header>
+            <div class="logo">Sistema SAG</div>
+            <nav>
+                <ul>
+                    <li><a href="admin.php">Inicio</a></li>
+                    <li><a href="register_client.php" class="active">Registrar Cliente</a></li>
+                    <li><a href="logout.php">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section class="form-container">
+                <h1>Registrar Nuevo Cliente</h1>
+                <form action="register_client.php" method="POST" id="clientForm">
+                    <div class="form-group">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico:</label>
+                        <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Teléfono:</label>
+                        <input type="text" id="phone" name="phone" placeholder="Teléfono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Dirección:</label>
+                        <textarea id="address" name="address" placeholder="Dirección completa" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado:</label>
+                        <select id="estado" name="estado">
+                            <option value="">Seleccione un estado</option>
+                            <!-- Opciones dinámicas cargadas con AJAX -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="distrito_federal">Distrito Federal:</label>
+                        <select id="distrito_federal" name="distrito_federal">
+                            <option value="">Seleccione un distrito federal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="distrito_local">Distrito Local:</label>
+                        <select id="distrito_local" name="distrito_local">
+                            <option value="">Seleccione un distrito local</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="municipio">Municipio:</label>
+                        <select id="municipio" name="municipio">
+                            <option value="">Seleccione un municipio</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="button">Registrar Cliente</button>
+                    <a href="admin.php" class="button-secondary">Regresar</a>
+                </form>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Sistema SAG. Todos los derechos reservados.</p>
+        </footer>
 </body>
 </html>
