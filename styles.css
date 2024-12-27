@@ -15,6 +15,59 @@ body {
     min-height: 100vh;
 }
 
+.login-container {
+    max-width: 400px; /* Ancho máximo del contenedor */
+    margin: 50px auto; /* Centrado horizontal y margen superior */
+    padding: 20px;
+    background-color: #ffffff; /* Fondo blanco */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    text-align: center; /* Centrar texto */
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #333333;
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 5px;
+    text-align: left;
+    font-weight: bold;
+    color: #333333;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background-color: #0056b3;
+}
+
+.spacing {
+    margin-bottom: 15px; /* Espacio adicional entre elementos */
+}
+
 .admin-container {
     max-width: 1200px;
     margin: 0 auto;
