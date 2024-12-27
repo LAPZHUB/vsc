@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $num_personas = $_POST['num_personas'];
     $cumplido = isset($_POST['cumplido']) ? 1 : 0;
     $seccion_id = $_POST['seccion'];
+    
 
     // Validación de campos
     if (empty($direccion_general) || empty($fecha_captura) || empty($area_responsable) || empty($nombre_completo) ||
@@ -201,7 +202,7 @@ $conn->close();
             ¿Cumplido?
         </label>        
             </div>
-            <button type="submit">Registrar Servicio</button>
+            <button type="submit">Continuar con los documentos</button>
         </form>
     </section>
 </main>
