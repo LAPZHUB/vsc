@@ -1,9 +1,11 @@
 <?php
 // db.php: Conexión a la base de datos
-$host = "localhost";
-$dbname = "sea_db";
-$username = "root";
-$password = "";
+session_start();
+include 'db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
