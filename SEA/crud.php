@@ -1,11 +1,7 @@
 <?php
 // db.php: Conexión a la base de datos
 session_start();
-include 'db.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+require_once 'db.php'; // Asegura una única inclusión
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
