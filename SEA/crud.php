@@ -1,45 +1,28 @@
 <?php
-// db.php: Conexión a la base de datos
-session_start();
-require_once 'db.php'; // Asegura una única inclusión
+// Incluir conexión a la base de datos
+require_once 'db.php';
 
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+// Iniciar sesión si aún no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Acceso denegado']);
     exit;
 }
 
-// auth.php: Login de usuarios
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include 'db.php';
-    
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $query = $conn->prepare("SELECT * FROM dirigente WHERE usuario = :username");
-    $query->bindParam(':username', $username);
-    $query->execute();
-
-    $user = $query->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($password, $user['password'])) {
-        session_start();
-        $_SESSION['user_id'] = $user['id_dirigente'];
-        echo json_encode(['status' => 'success', 'message' => 'Login successful']);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid credentials']);
-    }
-    exit;
+// Función para sanitizar entradas
+function sanitize_input($data) {
+    return htmlspecialchars(strip_tags($data));
 }
 
-// dirigente.php: CRUD para "dirigente"
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nom_dirigente'])) {
-    include 'db.php';
-
-    $nombre = $_POST['nom_dirigente'];
-    $usuario = $_POST['usuario'];
+// CRUD para "dirigente"
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nom_dirigente'])) {
+    $nombre = sanitize_input($_POST['nom_dirigente']);
+    $usuario = sanitize_input($_POST['usuario']);
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     $query = $conn->prepare("INSERT INTO dirigente (nom_dirigente, usuario, password) VALUES (:nombre, :usuario, :password)");
@@ -55,24 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nom_dirigente'])) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_GET['id_lider'])) {
-    include 'db.php';
-
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['id_lider'])) {
     $query = $conn->query("SELECT * FROM dirigente");
     $dirigentes = $query->fetchAll(PDO::FETCH_ASSOC);
-
     echo json_encode($dirigentes);
     exit;
 }
 
-// lider.php: CRUD para "lider"
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nom_lider'])) {
-    include 'db.php';
-
-    $id_dirigente = $_POST['id_dirigente'];
-    $nombre = $_POST['nom_lider'];
-    $usuario = $_POST['usuario'];
-    $estado = $_POST['estado_lider'];
+// CRUD para "lider"
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nom_lider'])) {
+    $id_dirigente = filter_input(INPUT_POST, 'id_dirigente', FILTER_VALIDATE_INT);
+    $nombre = sanitize_input($_POST['nom_lider']);
+    $usuario = sanitize_input($_POST['usuario']);
+    $estado = sanitize_input($_POST['estado_lider']);
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     $query = $conn->prepare("INSERT INTO lider (id_dirigente, nom_lider, usuario, estado_lider, password) VALUES (:id_dirigente, :nombre, :usuario, :estado, :password)");
@@ -90,10 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nom_lider'])) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id_dirigente'])) {
-    include 'db.php';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_dirigente'])) {
+    $id_dirigente = filter_input(INPUT_GET, 'id_dirigente', FILTER_VALIDATE_INT);
 
-    $id_dirigente = $_GET['id_dirigente'];
     $query = $conn->prepare("SELECT * FROM lider WHERE id_dirigente = :id_dirigente");
     $query->bindParam(':id_dirigente', $id_dirigente);
     $query->execute();
@@ -103,14 +80,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id_dirigente'])) {
     exit;
 }
 
-// capturista.php: CRUD para "capturista"
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nom_capturista'])) {
-    include 'db.php';
-
-    $id_dirigente = $_POST['id_dirigente'];
-    $id_lider = $_POST['id_lider'];
-    $nombre = $_POST['nom_capturista'];
-    $usuario = $_POST['usuario'];
+// CRUD para "capturista"
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nom_capturista'])) {
+    $id_dirigente = filter_input(INPUT_POST, 'id_dirigente', FILTER_VALIDATE_INT);
+    $id_lider = filter_input(INPUT_POST, 'id_lider', FILTER_VALIDATE_INT);
+    $nombre = sanitize_input($_POST['nom_capturista']);
+    $usuario = sanitize_input($_POST['usuario']);
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     $query = $conn->prepare("INSERT INTO capturista (id_dirigente, id_lider, nom_capturista, usuario, password) VALUES (:id_dirigente, :id_lider, :nombre, :usuario, :password)");
@@ -128,10 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nom_capturista'])) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id_lider'])) {
-    include 'db.php';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id_lider'])) {
+    $id_lider = filter_input(INPUT_GET, 'id_lider', FILTER_VALIDATE_INT);
 
-    $id_lider = $_GET['id_lider'];
     $query = $conn->prepare("SELECT * FROM capturista WHERE id_lider = :id_lider");
     $query->bindParam(':id_lider', $id_lider);
     $query->execute();
